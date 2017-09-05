@@ -24,3 +24,6 @@ outputCounterExample (Just n) = putStrLn ("Found counter example: product of " +
                                 show (take n primes) ++ " + 1 = " ++
                                 show (product(take n primes) + 1))
 outputCounterExample _ = putStrLn "No counter example found"
+
+run :: IO()
+run = outputCounterExample findCounterExample
