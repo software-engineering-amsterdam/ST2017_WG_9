@@ -17,7 +17,7 @@ prime n = n > 1 && all (\ x -> rem n x /= 0) xs
 primes :: [Integer]
 primes = 2 : filter prime [3..]
 
-reversals = takeWhile(<1000) (filter (prime.reversal) primes)
+reversals = takeWhile(<10000)  (filter (prime.reversal) primes)
 
 {- Testing: for any element in list, its reversal must be also in the list -}
 
