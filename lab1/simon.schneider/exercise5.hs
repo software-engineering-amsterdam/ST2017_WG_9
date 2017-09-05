@@ -1,3 +1,8 @@
+{--
+Time spent: 25m, sketching out the idea of a window that scrolls from left to
+right to find consecutive primes, then implement it in haskel using `tail`
+--}
+
 module Exercise5 where
 
 {--function to find primes with Eratosthenes’ sieve taken from lecture --}

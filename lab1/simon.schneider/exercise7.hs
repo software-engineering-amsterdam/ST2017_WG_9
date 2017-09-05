@@ -1,3 +1,9 @@
+{--
+Time spent: 45m, implementing the luhn check after reading the wikipedia article
+and a tutorial (https://www.youtube.com/watch?v=wsphC8V36i0). Test it against data
+from a random credit card generator http://www.getcreditcardnumbers.com/
+--}
+
 module Exercise7 where
 
 import Data.Char

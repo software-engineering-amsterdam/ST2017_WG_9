@@ -1,3 +1,7 @@
+{--
+Time spent: 30m
+--}
+
 module Exercise4 where
 
 {--

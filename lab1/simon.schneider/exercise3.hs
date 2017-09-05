@@ -1,5 +1,6 @@
 {--
-Time spent:
+Time spent: 35m, implementing, find out why comparePermutations1 does not work
+as expected (different order)
 --}
 
 module Exercise3 where

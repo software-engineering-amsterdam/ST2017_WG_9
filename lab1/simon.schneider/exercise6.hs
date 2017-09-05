@@ -1,3 +1,8 @@
+{--
+Time spent: 30m, implementing, finding a way to support endless lists,
+learn how to use the Maybe monad
+--}
+
 module Exercise6 where
 
 import Data.List
