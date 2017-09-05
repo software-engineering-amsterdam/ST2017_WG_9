@@ -4,7 +4,7 @@ import Test.QuickCheck
 
 -- Time: 3h getting to know haskell / 1h to solve problem
 
--- the solution for QuickCheck passing only positive numbers was found her
+-- the solution for QuickCheck passing only positive numbers was found here
 -- http://tutel.me/c/programming/questions/33063730/compare+two+functions+using+quickcheck+to+generate+positive+integers
 -- Docs: http://hackage.haskell.org/package/QuickCheck-2.10.0.1/docs/Test-QuickCheck-Modifiers.html
 

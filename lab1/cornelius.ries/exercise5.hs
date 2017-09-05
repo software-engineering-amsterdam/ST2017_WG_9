@@ -2,7 +2,7 @@ module Lab1 where
 import Data.List
 import Test.QuickCheck
 
- -- Time 2h
+ -- Time 2h - gave up
 
 sieve :: [Integer] -> [Integer]
 sieve (n:ns) = n : sieve (filter (\m -> rem m n /= 0) ns)
@@ -23,7 +23,23 @@ calc101Sums n = isSum101Prime(s)
 get101s :: [Bool]
 get101s = map calc101Sums [0..]
 
+{-
 bla :: Integer
 bla = sum(slice i (i+100) eprimes)
  where
    i = fromJust head(elemIndex True get101s)
+-}
+
+-- redo 20 min
+
+prime :: Integer -> Bool
+prime n = n > 1 && all (\ x -> rem n x /= 0) xs
+   where xs = takeWhile (\ y -> y^2 <= n) primes
+
+primes :: [Integer]
+primes = 2 : filter prime [3..]
+
+getPrimes101 :: [Integer] -> Integer
+getPrimes101 l
+  | prime(sum(take 101 l)) = sum(take 101 l)
+  | otherwise = getPrimes101(tail l)
