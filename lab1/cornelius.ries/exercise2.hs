@@ -4,15 +4,16 @@ import Test.QuickCheck
 
 -- Time: 20 min
 
-assum_4 :: [Int] -> Int
-assum_4 n = length(subsequences(n))
+assum :: [Int] -> Int
+assum n = length(subsequences(n))
 
-form_4 :: [Int] -> Int
-form_4 n = 2 ^ length(n)
+form :: [Int] -> Int
+form n = 2 ^ length(n)
 
-problem_4 :: [Int] -> Bool
-problem_4 n = assum_4 n == form_4 n
+problem :: [Int] -> Bool
+problem n = assum n == form n
 
+test = quickCheck problem
 
 {-
 

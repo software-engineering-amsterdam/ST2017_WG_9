@@ -4,18 +4,20 @@ import Test.QuickCheck
 
 -- Time : 20 min
 
-assum_5 :: [Int] -> Int
-assum_5 n = length(permutations(n))
+assum :: [Int] -> Int
+assum n = length(permutations(n))
 
 fac :: Int -> Int
 fac 0 = 1
 fac n = n * fac(n-1)
 
-form_5 :: [Int] -> Int
-form_5 n =  fac(length(n))
+form :: [Int] -> Int
+form n =  fac(length(n))
 
-problem_5 :: [Int] -> Bool
-problem_5 n = assum_5 n == form_5 n
+problem :: [Int] -> Bool
+problem n = assum n == form n
+
+test = quickCheck problem
 
 {-
 Is the property hard to test?

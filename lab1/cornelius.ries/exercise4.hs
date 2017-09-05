@@ -15,7 +15,7 @@ primes :: [Integer]
 primes = 2 : filter prime [3..]
 
 isReversalPrime :: Integer -> Bool
-isReversalPrime n = reversal(n) `elem` primes
+isReversalPrime n = prime(reversal(n))
 
 reversalPrimes :: [Integer]
 reversalPrimes = takeWhile(<10000) (filter isReversalPrime primes)
