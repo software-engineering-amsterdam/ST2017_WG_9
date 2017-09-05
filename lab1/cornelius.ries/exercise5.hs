@@ -2,7 +2,7 @@ module Lab1 where
 import Data.List
 import Test.QuickCheck
 
- -- Time
+ -- Time 2h
 
 sieve :: [Integer] -> [Integer]
 sieve (n:ns) = n : sieve (filter (\m -> rem m n /= 0) ns)
@@ -26,4 +26,4 @@ get101s = map calc101Sums [0..]
 bla :: Integer
 bla = sum(slice i (i+100) eprimes)
  where
-   i = head(elemIndex True get101s)
+   i = fromJust head(elemIndex True get101s)
