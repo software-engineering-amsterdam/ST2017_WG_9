@@ -7,12 +7,15 @@ import Test.QuickCheck
 reversal :: Integer -> Integer
 reversal = read . reverse . show
 
-sieve :: [Integer] -> [Integer]
-sieve (n:ns) = n : sieve (filter (\m -> rem m n /= 0) ns)
-eprimes = sieve [2..]
+prime :: Integer -> Bool
+prime n = n > 1 && all (\ x -> rem n x /= 0) xs
+   where xs = takeWhile (\ y -> y^2 <= n) primes
+
+primes :: [Integer]
+primes = 2 : filter prime [3..]
 
 isReversalPrime :: Integer -> Bool
-isReversalPrime n = reversal(n) `elem` eprimes
+isReversalPrime n = reversal(n) `elem` primes
 
 reversalPrimes :: [Integer]
-reversalPrimes = filter isReversalPrime eprimes
+reversalPrimes = takeWhile(<10000) (filter isReversalPrime primes)
