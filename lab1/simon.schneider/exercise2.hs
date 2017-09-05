@@ -1,3 +1,9 @@
+{--
+Time spent: 20m, after figuring out the basics inside exercise1 it was easy
+to find a solution for this exercise. Most of the time was spent answering the
+text based questions.
+--}
+
 module Exercise1 where
 import Test.QuickCheck
 import Data.List

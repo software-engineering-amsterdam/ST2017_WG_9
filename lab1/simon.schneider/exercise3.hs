@@ -1,3 +1,7 @@
+{--
+Time spent:
+--}
+
 module Exercise3 where
 import Test.QuickCheck
 import Data.List
@@ -5,20 +9,6 @@ import Data.List
 {--
 Redo exercise 5 of Workshop 1 by replacing sets by lists, and testing the
 property for integer lists of the form [1..n].
-
-Questions (1):
-Is the property hard to test? If you find that it is, can you given a reason why?
-
-//TODO
-
-Questions (2):
-Again, give your thoughts on the following issue:
-when you perform the test for exercise 5, what are you testing actually?
-Are you checking a mathematical fact?
-Or are you testing whether perms satisfies a part of its specification?
-Or are you testing something else still?
-
-//TODO
 
 --}
 

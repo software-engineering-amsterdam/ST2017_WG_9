@@ -15,7 +15,7 @@ the boys are actually lying.
 --}
 
 {--
-Define "one of them but not both" as an operator, also known as xor
+Define "one of them but not both" as an operator, also known as "xor"
 --}
 xor :: Bool -> Bool -> Bool
 xor a b = a /= b

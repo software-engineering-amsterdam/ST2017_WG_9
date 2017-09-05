@@ -15,7 +15,7 @@ test :: IO()
 test = verboseCheck permutationsComp
 
 {--TODO: Compare permutations function with perms from the slides, cannot test because order is
-different --> could implement equals that ignores order --}
+different --> could implement equals that ignores order (see simons solution (last 3 lines)) --}
 
 {-
 

@@ -1,3 +1,8 @@
+{--
+Time spent: 35m, figuring out how to approach the problem itself and how to tell
+QuickCheck that we only need to test for positive numbers.
+--}
+
 module Exercise1 where
 import Test.QuickCheck
 
