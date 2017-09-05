@@ -36,7 +36,6 @@ list of randomly generated variations of n.
 
 --}
 
-
 t4_subsequenceSize1 :: Int -> Int
 t4_subsequenceSize1 0 = 1
 t4_subsequenceSize1 n = length ( subsequences [1..n]  )
