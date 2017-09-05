@@ -1,17 +1,13 @@
 import Data.List
 import Test.QuickCheck
 
-infix 1 -->
-(-->) :: Bool -> Bool -> Bool
-p --> q = (not p) || q
-
 fractional :: Int -> Int
-fractional = \ n -> product[1..n]
+fractional (n) = product[1..n]
 
 {- Number of distinctive permutations of a finite set of n elements = n! -}
 
-permutationsComp :: Int -> Bool
-permutationsComp = \ n -> n >= 0 --> fractional n == length (permutations [1..n])
+permutationsComp :: Positive Int -> Bool
+permutationsComp (Positive n) = fractional n == length (permutations [1..n])
 
 test = quickCheckResult permutationsComp
 
