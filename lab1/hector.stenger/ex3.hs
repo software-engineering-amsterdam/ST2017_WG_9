@@ -1,6 +1,6 @@
 import Data.List
 import Test.QuickCheck
-{- time: 0.25 hours -}
+{- time: 0.5 hours -}
 
 (-->) :: Bool -> Bool -> Bool
 p --> q = (not p) || q
@@ -9,10 +9,16 @@ p --> q = (not p) || q
 isNatural :: Int -> Bool
 isNatural n = n >= 0
 
+factorial :: Int -> Int
+factorial 0 = 1
+factorial n = n * (factorial (n-1))
+
 lhs :: Int -> Int
-lhs n = length(subsequences [1..n])
+lhs n = factorial n
+{- lhs = n! -}
 
 rhs :: Int -> Int
-rhs n = 2^n
+rhs n = length (permutations [1..n])
+{- rhs = | perm [1..n] | -}
 
 runner = quickCheck(\n -> isNatural n --> (lhs n == rhs n))
