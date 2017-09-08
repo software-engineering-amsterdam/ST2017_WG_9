@@ -1,6 +1,9 @@
-module Exercise8 where
+module Ex8 where
 
 {--
+
+Author: The whole group
+
 Time Spent: 1h 5m together as a group. About 45 minutes spent on the whiteboard
 (sketch out the problem using predicate logic and a table). 20 minutes spent on
 transforming the solution into haskel.

@@ -1,5 +1,12 @@
+module Ex3 (fractional) where
+
 import Data.List
 import Test.QuickCheck
+
+{--
+  Author: Piotr kosytorz
+  Time spent: 15m
+--}
 
 fractional :: Int -> Int
 fractional (n) = product[1..n]

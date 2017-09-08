@@ -1,11 +1,6 @@
-module Ex6 (prime, primes, findCounterexampleVectorInPrimes) where
+module Exercise6 (prime, primes, findCounterexampleVectorInPrimes) where
 
 import Data.List
-
-{--
-  Author: Piotr kosytorz
-  Time spent: 30m
---}
 
 {- The following functions were given in the assigment -}
 

@@ -1,5 +1,12 @@
+module Ex2 (powerComp) where
+
 import Data.List
 import Test.QuickCheck
+
+{--
+  Author: Piotr kosytorz
+  Time spent: 10m
+--}
 
 {- We've agreed to use lists 1..n, which idicates that we work only with natural number -}
 powerComp :: Positive Int -> Bool

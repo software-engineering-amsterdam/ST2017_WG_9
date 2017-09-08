@@ -1,5 +1,12 @@
+module Ex1 (f1, f2, f3, f4) where
+
 import Data.List
 import Test.QuickCheck
+
+{--
+  Author: Piotr kosytorz
+  Time spent: 30m
+--}
 
 {- Excersise 2 Redo -}
 

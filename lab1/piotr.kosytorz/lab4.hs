@@ -1,5 +1,12 @@
+module Ex4 (reversal, prime, primes, reversals, reversalComp) where
+
 import Data.List
 import Test.QuickCheck
+
+{--
+  Author: Piotr kosytorz
+  Time spent: 30m
+--}
 
 {- The following functions were given in the assigment -}
 

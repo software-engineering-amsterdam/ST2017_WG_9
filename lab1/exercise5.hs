@@ -1,11 +1,6 @@
-module Ex5 (prime, primes, findVectorInHaystack) where
+module Exercise5 (prime, primes, findVectorInHaystack) where
 
 import Data.List
-
-{--
-  Author: Piotr kosytorz
-  Time spent: 45m
---}
 
 {- The following functions were given in the assigment -}
 
