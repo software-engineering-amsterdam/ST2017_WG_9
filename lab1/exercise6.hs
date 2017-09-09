@@ -1,4 +1,4 @@
-module Exercise6 (prime, primes, findCounterexampleVectorInPrimes) where
+module Exercise6 (counterexamples) where
 
 import Data.List
 
@@ -36,5 +36,6 @@ findCounterexampleVectorInPrimes n
 {-
   Lazy function: generates counterexamples.
   Notice: The filter is to sort out the empty touples
+  Result: The first counter example is ([2,3,5,7,11,13],30031)
 -}
 counterexamples = filter (\m -> m /= ([],0)) $ map(\n -> findCounterexampleVectorInPrimes n)[2..]

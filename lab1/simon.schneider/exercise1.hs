@@ -3,7 +3,7 @@ Time spent: 35m, figuring out how to approach the problem itself and how to tell
 QuickCheck that we only need to test for positive numbers.
 --}
 
-module Exercise1 where
+module Exercise1 (test_t2, test_t3) where
 import Test.QuickCheck
 
 t2_sum :: Int -> Int

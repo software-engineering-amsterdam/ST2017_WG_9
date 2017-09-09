@@ -13,18 +13,20 @@ predicate :: Integer -> Bool
 predicate n = n > 0 && isPrime n && isPrime (reversal n)
 
 findPrimesIn1000 :: [Integer]
-findPrimesIn1000 = filter predicate [1..10000]
+findPrimesIn1000 = filter predicate [2..10000]
 
 -- Test
 
 reversalTest :: Integer -> Bool
 reversalTest n = reversal(reversal n) == n
 
-testReversal = quickCheck(reversalTest)
+testReversal :: IO()
+testReversal = quickCheck reversalTest
 
 {-
+How would you test this function, by the way?
 
-The reversal function converts the Integer into a String
+> The reversal function converts the Integer into a String
 (:t read ------ read :: Read a => String -> a),
 reverses the String and tries to parse the result as an Integer again.
 
@@ -36,7 +38,7 @@ Cases were this will not work:
 - For numbers ending with a zero this will lead to eg: 1000 -> 0001
   This will result in a failed test as the reversed result is 1.
 
-In our use case the function does work,
-because we are only working with primenumbers.
+In our use case the function does work, because we are only working with
+primenumbers (positive and not a multiple of 10)
 
 -}

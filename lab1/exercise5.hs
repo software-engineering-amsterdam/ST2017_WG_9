@@ -1,6 +1,4 @@
-module Exercise5 (prime, primes, findVectorInHaystack) where
-
-import Data.List
+module Exercise5 (test) where
 
 {- The following functions were given in the assigment -}
 
@@ -23,11 +21,22 @@ findVectorInHaystack haystack
    | prime (sum (take 101 haystack)) = take 101 haystack
    | otherwise = findVectorInHaystack (tail haystack)
 
+solution :: [Integer]
 solution = findVectorInHaystack primes
+
+sumOfSolution :: Integer
 sumOfSolution = sum solution
+{- Result is always: 37447 -}
 
 {-
-  This is a simple pro-forma test. It doesn't make sense to test this funtion,
-  as it's implementation would be the same as the method itself.
+Do you have to test that your answer is correct?
+How could this be checked?
+
+> This is a simple pro-forma test. It doesn't make sense to test this funtion,
+as it's implementation would be the same as the method itself. We have to assume
+that all the functions that were used are implemented correctly.
+
+We are therefore only checking if the resulting number is still prime.
 -}
-test = prime $ sumOfSolution
+test :: Bool
+test = prime sumOfSolution

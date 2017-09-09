@@ -4,7 +4,7 @@ to find a solution for this exercise. Most of the time was spent answering the
 text based questions.
 --}
 
-module Exercise1 where
+module Exercise2 (test) where
 import Test.QuickCheck
 import Data.List
 
@@ -52,5 +52,5 @@ t4_subsequenceSize2 n = 2 ^ n
 t4 :: Positive Int -> Bool
 t4 (Positive n) = t4_subsequenceSize1 n == t4_subsequenceSize2 n
 
-test_t4 :: IO()
-test_t4 = verboseCheck t4
+test :: IO()
+test = verboseCheck t4

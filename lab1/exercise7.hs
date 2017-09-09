@@ -1,3 +1,5 @@
+module Exercise7 where
+
 import Data.Char
 import Test.QuickCheck
 
@@ -73,29 +75,40 @@ validator :: ([Integer] -> Bool) -> ([Integer] -> Bool) -> Integer -> Bool
 validator lengthVal prefixVal arr = lengthVal cardnumbers && prefixVal cardnumbers && luhn arr
     where cardnumbers = toIntegerArray arr
 
-{- All the possibilities of either correct or incorrect cc numbers. Either the length or the prefix is incorrect -}
+{-
+Since we do not have a simple credit card generator we are using examples from
+http://www.getcreditcardnumbers.com
+
+All the possibilities of either correct or incorrect cc numbers. Either the
+length or the prefix is incorrect
+-}
+correctMasters :: [Integer]
 correctMasters = [5519189879429607,
                   2221002283190788,
                   5290331028850599]
 
+incorrectMasters :: [Integer]
 incorrectMasters = [0519189879429607,
                     22210022831907888,
                     02903310288505998]
 
+correctVisas :: [Integer]
 correctVisas = [4916908882295818,
                 4916908882295818,
                 4929502543771104,
                 4556110785253854913]
 
+inCorrectVisas :: [Integer]
 inCorrectVisas = [2916908882295818,
                   491690888229,
                   492950254377110,
                   49295025437711]
-
+correctAE :: [Integer]
 correctAE = [378014233128052,
              375391662844422,
              346374000541732]
 
+incorrectAE :: [Integer]
 incorrectAE = [388014233128052,
               385391662844422,
               3463740005417322]
