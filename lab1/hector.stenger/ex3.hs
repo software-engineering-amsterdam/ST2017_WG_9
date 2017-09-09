@@ -1,24 +1,31 @@
 import Data.List
 import Test.QuickCheck
-{- time: 0.5 hours -}
-
-(-->) :: Bool -> Bool -> Bool
-p --> q = (not p) || q
-
-{- function for checking whether an Int is a natural number -}
-isNatural :: Int -> Bool
-isNatural n = n >= 0
+{- time: 1 hour -}
 
 factorial :: Int -> Int
 factorial 0 = 1
 factorial n = n * (factorial (n-1))
 
-lhs :: Int -> Int
-lhs n = factorial n
-{- lhs = n! -}
+{- Number of distinctive permutations of a finite set of n elements = n! -}
 
-rhs :: Int -> Int
-rhs n = length (permutations [1..n])
-{- rhs = | perm [1..n] | -}
+perms :: [a] -> [[a]]
+perms [] = [[]]
+perms (x:xs) = concat (map (insrt x) (perms xs)) where
+    insrt x [] = [[x]]
+    insrt x (y:ys) = (x:y:ys) : map (y:) (insrt x ys)
 
-runner = quickCheck(\n -> isNatural n --> (lhs n == rhs n))
+{- The property is hard to test because the results are factorial N which will soon -}
+{- be too much for the computer to calculate quickly. -}
+permutationsComp :: Positive Int -> Bool
+permutationsComp (Positive n) = factorial n == length (permutations [1..n])
+
+compareFunctions :: Positive Int -> Bool
+compareFunctions (Positive n) = sort (perms [1..n]) == sort (permutations [1..n])
+
+{- We're testing whether the permutations function from Data.List has the same output as -}
+{- our own Perms function when we call it with the same arguments. We are testing a -}
+{- specification, and not a mathematical fact. We are using verbose check to
+- see which numbers take "forever -}
+test :: IO()
+{- test = verboseCheck permutationsComp -}
+test = verboseCheck compareFunctions
