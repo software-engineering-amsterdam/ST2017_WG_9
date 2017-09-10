@@ -52,3 +52,8 @@ isMaster n = checkLengths validLengths n && checkPrefixes validPrefixes n && luh
 isVisa n = checkLengths validLengths n && checkPrefixes validPrefixes n && luhn n
   where validLengths = [13,16,19]
         validPrefixes = [4]
+
+validMasters = [2720993416403443,2221002547603733,5301205344029715]
+invalidMasters = [374634780951095,30419014176222,4508581375837562]
+
+checkMasters = all isMaster validMasters && not (all isMaster invalidMasters)
