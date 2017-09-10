@@ -45,3 +45,20 @@ In our use case the function does work,
 because we are only working with primenumbers.
 
 -}
+
+-- some playing around after learning some more haskell
+
+redoFindPrimes :: [Integer]
+redoFindPrimes = takeWhile (<10000) [x | x <- [1..], prime x, prime (reversal x)]
+
+redoFindPrimes2 :: [Integer]
+redoFindPrimes2 = [x | x <- [1..10000], prime x, prime (reversal x)]
+
+redoFindPrimesF :: [Integer]
+redoFindPrimesF = takeWhile (<10000) (filter (\x -> prime x && prime (reversal x)) [1..])
+
+redoFindPrimesF2 :: [Integer]
+redoFindPrimesF2 = filter (\x -> prime x && prime (reversal x)) [1..10000]
+
+redoFindPrimesF3 :: [Integer]
+redoFindPrimesF3 = takeWhile (<10000) (filter (prime . reversal) primes)
