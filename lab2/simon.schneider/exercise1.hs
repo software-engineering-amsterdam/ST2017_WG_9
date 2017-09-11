@@ -66,6 +66,10 @@ probs n = do
             ps <- probs (n-1)
             return (p:ps)
 
+{-
+Split floats in buckets like this:
+(0..0.25), [0.25..0.5), [0.5..0.75), [0.75..1)
+-}
 addToBucket :: (Int,Int,Int,Int) -> Float -> (Int, Int, Int, Int)
 addToBucket (a,b,c,d) x
     | x <= 0.25 = (a+1, b, c ,d)
