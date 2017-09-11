@@ -36,6 +36,7 @@ ternaSums2 x = [(a,b,(1000 - a - b),a + b + (1000 - a - b)) | a<-[1..x], b<-[1..
 {-
 Third try: Even faster than version 2 because we do not iterate from 0 to 1000
 We use the knowledge that c is equal to 1000 - a - b (because a+b+c = 1000)
+
 a iterates from [1..333]
 and b iterates from [1..500]
 ternaSums3(1000) done after (333*500) = 166.500 iterations
