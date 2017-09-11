@@ -25,3 +25,40 @@ counterexamples3 n
 
 generateCounters :: [([Integer],Integer)]
 generateCounters = filter (\m -> m /= ([], 0)) (map counterexamples3 [1..])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- redo
+counterexamples4 :: Integer -> ([Integer], Integer)
+counterexamples4 n
+  | prime cpp = (cp,cpp)
+  | otherwise = ([],0)
+  where
+    cp = take (fromIntegral n) primes
+    cpp = product cp + 1
+
+
+counterexamples4c :: [([Integer], Integer)]
+counterexamples4c = filter (\x -> x /= ([],0)) (map counterexamples4 [1..])

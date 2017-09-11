@@ -43,3 +43,46 @@ getPrimes101 :: [Integer] -> Integer
 getPrimes101 l
   | prime(sum(take 101 l)) = sum(take 101 l)
   | otherwise = getPrimes101(tail l)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---
+
+findSmallest101PrimeR :: [Integer] -> Integer
+findSmallest101PrimeR l
+  | prime t = t
+  | otherwise = findSmallest101PrimeR $ tail l
+  where
+    t = sum $ take 101 l
+
+findSmallest101Prime :: Integer
+findSmallest101Prime = findSmallest101PrimeR primes
