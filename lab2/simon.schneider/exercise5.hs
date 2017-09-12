@@ -111,6 +111,8 @@ testIsAlsoPermutation l1 l2 = isDerangement l1 l2 --> isPermutation l1 l2
 testDoNotShareElementsAtSamePosition :: [Int] -> [Int] -> Bool
 testDoNotShareElementsAtSamePosition l1 l2 = isDerangement l1 l2 --> noElementsSharedAtSamePosition l1 l2
 
+{-- Generate powerset taken from:
+https://mail.haskell.org/pipermail/haskell-cafe/2003-June/004484.html --}
 
 (/\/)        :: [a] -> [a] -> [a]
 []     /\/ ys = ys
