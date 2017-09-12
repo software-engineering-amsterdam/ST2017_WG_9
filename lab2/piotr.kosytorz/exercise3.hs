@@ -26,6 +26,8 @@ p6 x = even x
 p7 x = even x
 p8 x = (even x && x > 3) || even x
 
+{-- Testing --}
+
 domain = [-10..10]
 
 testP1strongerThanP2 = stronger domain p1 p2
@@ -39,3 +41,5 @@ testP6strongerThanP5 = stronger domain p6 p5
 
 testP7strongerThanP8 = stronger domain p7 p8
 testP8strongerThanP7 = stronger domain p8 p7
+
+{-- TODO: a descending list of strengths --}

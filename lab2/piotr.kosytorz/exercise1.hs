@@ -21,6 +21,8 @@ quartileCount ml = do
     length $ filter (\x -> x>0.75) l
     ]
 
+{-- Tests --}
+
 addMargin :: Int -> Int -> Int -> Float
 addMargin total pieces param =
   (((fromIntegral total) / (fromIntegral pieces) ) * (1 + ((fromIntegral param) / 100)))
