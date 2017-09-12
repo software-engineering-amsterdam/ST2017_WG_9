@@ -1,7 +1,4 @@
-
-module Lecture2
-
-where
+module Lecture2 where
 
 import System.Random
 import Test.QuickCheck
