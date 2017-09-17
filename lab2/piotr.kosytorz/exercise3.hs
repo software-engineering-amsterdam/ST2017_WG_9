@@ -1,6 +1,6 @@
 import Data.List
 
-{-- Time spent: 15m --}
+{-- Time spent: 30m --}
 
 infix 1 -->
 (-->) :: Bool -> Bool -> Bool
