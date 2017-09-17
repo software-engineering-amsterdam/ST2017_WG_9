@@ -7,6 +7,7 @@ import Test.QuickCheck
 
 -- Time Spent:
 -- 10 min on isPermutation
+-- 2h on properties and understand how stronger/weaker is used in this case
 
 infix 1 -->
 
