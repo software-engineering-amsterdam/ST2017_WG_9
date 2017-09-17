@@ -52,6 +52,8 @@ listHasOnlyUniqueElements (x:xs) = x `notElem` xs && listHasOnlyUniqueElements x
 testSwap :: [Integer] -> [Integer] -> Bool
 testSwap l1 l2 = isDerangement l1 l2 && isDerangement l2 l1
 
+{-- TODO: Orderd list of properties --}
+
 {-- Test lists for testing  --}
 
 -- should pass: rotated list
