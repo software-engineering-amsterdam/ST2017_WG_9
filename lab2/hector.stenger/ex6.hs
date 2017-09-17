@@ -32,5 +32,3 @@ substituteNonAscii s = rot 13 nonAscii == nonAscii
 
 doubleSubstitute :: [Char] -> Bool
 doubleSubstitute s = rot 13 (rot 13 s) == s 
-
-{- check whether the offset after changing a value is exactly 13 -}
