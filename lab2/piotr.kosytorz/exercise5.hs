@@ -1,4 +1,7 @@
 import Data.List
+{--
+  Time spent: 1,5h
+--}
 
 infix 1 -->
 (-->) :: Bool -> Bool -> Bool
@@ -30,10 +33,11 @@ isDerangement l1 l2 = checkInitialProperties l1 l2 && isDerangementHlp l1 l2
 deran :: Integer -> [[Integer]]
 deran n = filter (\x -> isDerangement x [0..(n-1)]) (permutations [0..(n-1)])
 
-{-- Test properties --}
+{-- Some tests for the methods --}
 
-sameList :: [Integer] -> [Integer] -> Bool
-sameList l1 l2 = l1 == l2
+{-- preconditions --}
+notTheSameList :: [Integer] -> [Integer] -> Bool
+notTheSameList l1 l2 = l1 == l2
 
 sameLength :: [Integer] -> [Integer] -> Bool
 sameLength l1 l2 = length l1 == length l2
@@ -49,6 +53,9 @@ listHasOnlyUniqueElements :: [Integer] -> Bool
 listHasOnlyUniqueElements [] = True
 listHasOnlyUniqueElements (x:xs) = x `notElem` xs && listHasOnlyUniqueElements xs
 
+{-- Preconditions are incomparable --}
+
+{-- postcondition --}
 testSwap :: [Integer] -> [Integer] -> Bool
 testSwap l1 l2 = isDerangement l1 l2 && isDerangement l2 l1
 
@@ -82,12 +89,25 @@ testList62 = [1]
 testList71 = [1,2,3,3,4]
 testList72 = [3,1,4,2,3]
 
+-- should fail: the same list
+testlist81 = [1,2,3,4,5]
+testlist82 = [1,2,3,4,5]
+
 {--
-  isDerangement testList11 testList12
-  isDerangement testList21 testList22
-  isDerangement testList31 testList32
-  isDerangement testList41 testList42
-  isDerangement testList51 testList52
-  isDerangement testList61 testList62
-  isDerangement testList71 testList72
+*Main> isDerangement testList11 testList12
+True
+*Main> isDerangement testList21 testList22
+True
+*Main> isDerangement testList31 testList32
+False
+*Main> isDerangement testList41 testList42
+False
+*Main> isDerangement testList51 testList52
+False
+*Main> isDerangement testList61 testList62
+False
+*Main> isDerangement testList71 testList72
+True
+*Main> isDerangement testList81 testList82
+False
 --}

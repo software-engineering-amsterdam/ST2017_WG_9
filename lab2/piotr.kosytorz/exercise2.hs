@@ -33,8 +33,19 @@ equilaterals = [(a,b,c) | a <- [1..10], b <- [1..10], c <- [1..10], a == b && b 
 isosceleses = [(a,b,c) | a <- [1..10], b <- [1..10], c <- [1..10], isTriangle a b c && ((a == b && a /= c) || (a == c && a /= b) || (b == c && b /= a)) ] -- preconditions of the generator must be stronger that the ones of the test
 rectangulars = [ (a,b,c) | c <- [1..100], b <- [1..c], a <- [1..b], a^2 + b^2 == c^2] -- this precondition is sufficient for both: generator and test
 
-testNoTriangles = or $ map(\x -> x == Rectangular) $ map triangleToupleWrapper noTriangles
-testEquilaterals = or $ map(\x -> x == Rectangular) $ map triangleToupleWrapper equilaterals
-testIsosceleses = or $ map(\x -> x == Rectangular) $ map triangleToupleWrapper isosceleses
+testNoTriangles = or $ map(\x -> x == NoTriangle) $ map triangleToupleWrapper noTriangles
+testEquilaterals = or $ map(\x -> x == Equilateral) $ map triangleToupleWrapper equilaterals
+testIsosceleses = or $ map(\x -> x == Isosceles) $ map triangleToupleWrapper isosceleses
 testRectangulars = or $ map(\x -> x == Rectangular) $ map triangleToupleWrapper rectangulars
--- no testing others
+-- not testing others
+
+{-- All tests pass:
+  *Main> testNoTriangles
+  True
+  *Main> testEquilaterals
+  True
+  *Main> testIsosceleses
+  True
+  *Main> testRectangulars
+  True
+--}
