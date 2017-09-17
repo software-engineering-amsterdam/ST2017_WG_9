@@ -1,25 +1,7 @@
 import Data.List
 
-infix 1 -->
-(-->) :: Bool -> Bool -> Bool
-p --> q = (not p) || q
-
-stronger, weaker :: [a] -> (a -> Bool) -> (a -> Bool) -> Bool
-stronger xs p q = forall xs (\ x -> p x --> q x)
-weaker   xs p q = stronger xs q p 
-
-isDerangement :: [Int] -> [Int] -> Bool
-isDerangement [] [] = True
-isDerangement _ [] = False
-isDerangement [] _ = False
-isDerangement [x] [y] = not (x == y)
-isDerangement (x:xs) (y:ys)
-    | x == y = False
-    | elem x ys = False
-    | otherwise = isDerangement xs ys
-
-deran :: [Int] -> [[Int]]
-deran n = filter (isDerangement n) $ permutations n
+isPermutation :: Eq a => [a] -> [a] -> Bool
+isPermutation x y = elem x $ permutations y
 
 samelength :: [Int] -> [Int] -> Bool
 samelength xs ys = length xs == length ys
@@ -29,14 +11,19 @@ sameitems [] [] = True
 sameitems [x] ys = elem x ys
 sameitems (x:xs) ys = elem x ys && sameitems xs ys
 
-samelists :: [Int] -> [Int] -> Bool
-samelists x y = x == y
+sameListCheck = isPermutation [1,2] [1,2] == False
+reversedOrderCheck = isPermutation [2,1] [1,2] == True
+exampleCheck = isPermutation [2,2,0] [1,2,3] == False
 
-lengthCheck :: [Int] -> [Int] -> Bool
-lengthCheck x y = (isDerangement x y) --> samelength x y
+{- Checking whether a list is a permutation of itself -}
+equality n = isPermutation n n
 
-itemsCheck :: [Int] -> [Int] -> Bool
-itemsCheck x y = (isDerangement x y) --> sameitems x y
+{- Checking whether a different order is a permuation -}
+differentOrder n = isPermutation n (sort n)
+    && isPermutation (sort n) n
+    && isPermutation n (reverse n)
+    && isPermutation (reverse n) n
 
-listsCheck :: [Int] -> [Int] -> Bool
-listsCheck x y = (isDerangement x y) --> samelength x y
+{- Precondition should state that both items are lists. -}
+{- Postcondition check should be checking whether both lists -}
+{- share the same length and have the same items. -}
