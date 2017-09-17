@@ -15,7 +15,7 @@ data Shape = NoTriangle | Equilateral
 
 triangle :: Integer -> Integer -> Integer -> Shape
 triangle a b c
-  | not (a + b > c) || not (a + c > c) || not (c + b > a) = NoTriangle
+  | a + b <= c || a + c <= b || b + c <= a = NoTriangle
   | a == b && b == c = Equilateral
   | a == b && b /=c || b == c && c /= a || a==c && c/= b = Isosceles
   | a^2 + b^2 == c^2 || a^2 + c^2 == b^2 || b^2+c^2 == a^2 = Rectangular
