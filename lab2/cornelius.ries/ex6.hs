@@ -7,7 +7,7 @@ import Test.QuickCheck
 import Data.Maybe
 
 -- Time Spent:
---
+-- 1h on function and test propteries
 
 infix 1 -->
 
@@ -27,7 +27,6 @@ in the alphabet of the original char. All other characters stay the same.
 
 - Applying the function twice yields the original input.
 - The function will not change the length of the input
-- T
 
 Domain: UPPER Case Characters From A..Z
 

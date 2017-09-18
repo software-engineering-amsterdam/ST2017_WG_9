@@ -1,8 +1,5 @@
 import System.Random
 import Test.QuickCheck
-{--
-  Time spent: 3h (30 min for the problem and 90 min for figuring out how monads work)
---}
 
 {--
   probs was given in the assignment - it generates a list of n random numbers

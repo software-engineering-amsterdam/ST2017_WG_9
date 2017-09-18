@@ -1,5 +1,13 @@
 import Data.List
 import Data.Char
+import Test.QuickCheck
+{--
+  Time spent: 1h 
+--}
+
+infix 1 -->
+(-->) :: Bool -> Bool -> Bool
+p --> q = (not p) || q
 
 {--
   Specification for ROT13:
@@ -34,12 +42,24 @@ rot13 (x:xs)
 
 {-- Tests --}
 
--- length s1 = length s2
+simpleText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse vitae risus justo. Duis efficitur sagittis augue, a suscipit sapien rhoncus convallis"
 
--- (string1, string2) - difference in ord x for corresponding letters of the alphabet from string1 and string2 must be always 13
+-- length s1 = length s2
+lengthComp :: Positive Int -> Bool
+lengthComp (Positive n) = n <= length simpleText --> length (take n simpleText) == length (rot13 (take n simpleText))
+test1 = quickCheckResult lengthComp
+{-- Results:
+  *Main> test1
+  +++ OK, passed 100 tests.
+  Success {numTests = 100, labels = [], output = "+++ OK, passed 100 tests.\n"}
+--}
 
 -- rot13(rot13(s)) = s
-
--- rot should not touch anything that does not belong to the alphabet
-
--- rot should transform all letters that belong to the alphabet
+refComp :: Positive Int -> Bool
+refComp (Positive n) = n <= length simpleText --> rot13 (take n simpleText) == rot13 (rot13 (take n simpleText))
+test2 = quickCheckResult lengthComp
+{-- Results:
+  *Main> test2
+  +++ OK, passed 100 tests.
+  Success {numTests = 100, labels = [], output = "+++ OK, passed 100 tests.\n"}
+--}

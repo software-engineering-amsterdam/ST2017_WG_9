@@ -6,7 +6,7 @@ import System.Random
 import Test.QuickCheck
 
 -- Time Spent:
---
+-- 4h on excercise and debating with team mates
 
 infix 1 -->
 

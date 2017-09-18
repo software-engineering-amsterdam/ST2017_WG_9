@@ -1,34 +1,25 @@
-import Data.Char
-{--
-  Time spent: 1h
---}
+someIban = "DE44500105175407324931"
+otherIban = "GB82WEST12345698765432"
 
-{-- Implementing and testing IBAN validation --}
+iban :: [Char] -> Bool
+iban n = number `mod` 97 == 1
+    where ibanNumber = arrayToInteger (map convertToInteger (moveFourToBack n))
+          number = read ibanNumber :: Integer
 
-removeSpaceAndToUpperCase :: String -> String
-removeSpaceAndToUpperCase s = map toUpper (filter (/= ' ') s)
+arrayToInteger :: [Int] -> [Char]
+arrayToInteger [x] = show x ++ []
+arrayToInteger (x:xs) = show x ++ arrayToInteger xs
 
-rearrange :: String -> String
-rearrange s = (drop 4 s) ++ (take 4 s)
+convertToInteger :: Char -> Int
+convertToInteger s
+    | i < 58 && i > 47 = i - 48
+    | otherwise = i - 55 
+    where i = fromEnum s
 
-replaceLettersWithNumbers :: String -> String
-replaceLettersWithNumbers [] = []
-replaceLettersWithNumbers (x:xs)
-  | ord x >= 65 && ord x <= 90 = show (ord x - 55) ++ replaceLettersWithNumbers xs
-  | otherwise = x:replaceLettersWithNumbers xs
+moveFourToBack :: [Char] -> [Char]
+moveFourToBack n = drop 4 n ++ take 4 n
 
-str2integer :: String -> Integer
-str2integer s = read s :: Integer
-
-checkReminder :: Integer -> Bool
-checkReminder n = n `mod` 97 == 1
-
-iban :: String -> Bool
-iban s
-  | length s < 15 && length s > 32 = False
-  | checkReminder $ str2integer $ replaceLettersWithNumbers $ rearrange $ removeSpaceAndToUpperCase s = True
-  | otherwise = False
-
+{- Example valid iban numbers copied from Piotr -}
 validExamples = ["AL47212110090000000235698741",
   "AD1200012030200359100100",
   "AT611904300234573201",
@@ -87,6 +78,7 @@ validExamples = ["AL47212110090000000235698741",
   "TR330006100519786457841326",
   "AE070331234567890123456"]
 
+{- Example invalid iban numbers copied from Piotr -}
 invalidExamples = [
   "PL601020102600042270201111",
   "PT51000201232234567890154",
@@ -102,20 +94,7 @@ invalidExamples = [
   "CH93007620233852957",
   "TN5915555183598478831",
   "TR3300061069786457841326",
-  "AE070331234567896123456"
-  ]
+  "AE070331234567896123456"]
 
-testValidExamples = and $ map (\x -> iban x) validExamples
-{-- Results:
-  *Main> testValidExamples
-  True
---}
-testInvalidExamples = and $ map (\x -> not $ iban x) invalidExamples
-{-- Results:
-  *Main> testInvalidExamples
-  True
---}
-
-{-- Can you automate this test process?
-  Not really.
---}
+validityCheck = all iban validExamples
+invalidityCheck = all (\n -> not $ iban n) invalidExamples

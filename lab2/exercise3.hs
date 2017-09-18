@@ -1,7 +1,5 @@
 import Data.List
 
-{-- Time spent: 30m --}
-
 infix 1 -->
 (-->) :: Bool -> Bool -> Bool
 p --> q = (not p) || q
