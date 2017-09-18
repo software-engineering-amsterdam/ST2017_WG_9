@@ -60,7 +60,7 @@ rotateString m n = map (\c ->  rotateChar c n) m
 
 rotateChar :: Char -> Int -> Char
 rotateChar c n
-  | c `elem` alphabet =  getCharAtPosition (findIndex (== c) alphabet) n
+  | c `elem` alphabet = getCharAtPosition (findIndex (== c) alphabet) n
   | otherwise = c
 
 {--
