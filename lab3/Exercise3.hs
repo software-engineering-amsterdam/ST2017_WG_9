@@ -6,7 +6,8 @@ import Test.QuickCheck
 import Lecture3
 
 {--
-TODO: Talk about super complex solution, compare
+TODO: Talk about super complex solution, compare. Algorithm is much better
+in runtime and in formular length (if all redundancies are removed)
 
 --}
 
