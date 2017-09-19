@@ -5,6 +5,14 @@ import System.Random
 import Test.QuickCheck
 import Lecture3
 
+{--
+  TODO:
+    - time indication
+    - report
+    - write test generator with ex4: test if the truth tables are the same
+    - (optionally) write test for CNF (is it really CNF)
+--}
+
 tautology :: Form -> Bool
 tautology formx = all (\x -> evl x formx) $ allVals formx
 
