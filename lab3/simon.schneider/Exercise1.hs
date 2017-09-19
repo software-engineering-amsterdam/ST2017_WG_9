@@ -48,7 +48,15 @@ entailsForValuation f1 f2 v = (r1 && r2) || not r1
 
 
 equiv :: Form -> Form -> Bool
-equiv f1 f2 = all (\v -> evl v f1 == evl v f2) (allVals f1)
+{-
+Solution 1:
+  equiv f1 f2 = all (\v -> evl v f1 == evl v f2) (allVals f1)
+Problem:
+  This works for forms that have the same set of properties.
+  The problem is that it wont work for two formulars that are equivalant but
+  have a diffrent set of properties: Example f1: (Q), f2: (Q ∧ (R ∧ -R))
+-}
+equiv f1 f2 = tautology (Equiv f1 f2)
 
 {------------------------------------------------------------------------------
                         Test

@@ -1,7 +1,9 @@
 module Exercise3 where
 
-import Lecture3
-import Exercise1
+import Lecture3Dirty
+
+equiv :: Form -> Form -> Bool
+equiv f1 f2 = all (\v -> evl v f1 == evl v f2) (allVals f1)
 
 {--
 Task:
@@ -16,6 +18,9 @@ Specification
 
 1. Remove arrows (arrow free form)
 2. Convert to negation normal form. (move negations inwards)
+3. Apply demorgan to remove to move conjunctions to the outside
+4. Remove redundancies (q ∧ -q = False, q ∨ -q = True ...)
+5. Test if functions are still equivalent
 
 --}
 
@@ -25,6 +30,7 @@ _form1Cnf = Cnj [Dsj [p,r], Dsj [Neg q, r]]
 _form2 = Neg (Dsj [p,r])
 _form3 = Dsj [Cnj [p,Neg q], r]
 _form4 = Dsj [Cnj [p, q], r]
+_form5 = Dsj [Cnj [p, q], r]
 
 
 _testForm1 :: Bool
@@ -40,8 +46,16 @@ cnfConvertBrackets f = f
 {--
 Apply demorgans law to bring nnf formula into cnf
 P ∨ (Q ∧ R)) ⇔ (P ∨ Q) ∧ (P ∨ R)
+P ∨ (Q ∧ R ∧ N)) ⇔ (P ∨ Q) ∧ (P ∨ R)  ∧ (P ∨ N)
+P ∨ (Q ∧ (L ∨ R))) ⇔ (P ∨ Q) ∧ (P ∨ (L ∨ R))
 --}
 demorgan :: Form -> Form -> Form
-demorgan (Prop x) (Cnj [Prop y1, Prop y2]) = Cnj [Dsj [Prop y1, Prop x], Dsj [Prop y2, Prop x]]
-demorgan (Cnj [Prop x1, Prop x2]) (Prop y) = Cnj [Dsj [Prop x1, Prop y], Dsj [Prop x2, Prop y]]
-demorgan x1 x2 = Dsj [x1, x2]
+demorgan _ (Cnj []) = Cnj []
+demorgan (Cnj []) _ = Cnj []
+demorgan f (Cnj [g]) = demorgan f g
+demorgan (Cnj [f]) g = demorgan f g
+demorgan f (Cnj (g:gs)) = Cnj [demorgan f g, demorgan f (Cnj gs)]
+demorgan (Cnj (f:fs)) g = Cnj [demorgan f g, demorgan (Cnj fs) g]
+demorgan f g = Dsj [f,g]
+
+demorganTest1 = demorgan p (Cnj [q, r])
