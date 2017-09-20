@@ -33,5 +33,5 @@ cf (x:xs)
 -- CNF from
 cnf :: Form -> Form
 cnf f
-  | tautology f = error "Given formula is a tautology." --TODO: Return a tautology for tests
+  | tautology f = Cnj []
   | otherwise = cf $ map (\x -> v2dl x) $ extractFalseResults f
