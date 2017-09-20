@@ -23,6 +23,11 @@ generating forms we thought about binary trees or AST trees. We found out that
 the data types predefine a certain grammar (recursive data type) that could be
 seen like a tree, which does not allow incorrect formulas.
 
+Hector used a binary tree as the basis for his approach. It worked out by
+splitting a sub formular like *(1 2 3) into *(1 *(2 *(3))). To achieve this
+he had to change data definitions in the Lecture3.hs - this is the main reason
+why we have chosen this solution
+
 Test the implementation:
 The postcondition of the generator is that the outputted function is a valid
 formula. Since the typechecking proofs that the output has to be of type IO Form

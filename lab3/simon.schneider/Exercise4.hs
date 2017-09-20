@@ -1,11 +1,7 @@
 module Exercise4 where
 
 {------------------------------------------------------------------------------
-TODO:
-- Write test generator
-- Write self test for generated forms (parse show f)
-- Write about no preconditions needed (grammar takes care)
-- Write tests for exercise 3 and 1
+time spent: 1h 30m (see ../Exercise4.hs)
 -------------------------------------------------------------------------------}
 
 

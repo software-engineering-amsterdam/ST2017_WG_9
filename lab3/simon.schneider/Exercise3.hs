@@ -6,6 +6,12 @@ equiv :: Form -> Form -> Bool
 equiv f1 f2 = all (\v -> evl v f1 == evl v f2) (allVals f1)
 
 {--
+time spent: 1h, learn about CNF conversions on internet, understand application
+of de morgan rule, find ways to remove redundancies
+
+--> Used piotrs solution insted which is less efficient but implemented in a
+very elegant way.
+
 Task:
 The lecture notes of this week discuss the conversion of Boolean formulas
 (formulas of propositional logic) into CNF form. The lecture notes also give a
