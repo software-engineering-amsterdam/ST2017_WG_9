@@ -4,14 +4,9 @@ import Data.List
 import System.Random
 import Test.QuickCheck
 import Lecture3
+import Lab3ex1
 
 -- Time spent: 5h trying to apply the solution from the lecture
-
-equiv :: Form -> Form -> Bool
-equiv f1 f2 = all (\ (b1,b2) -> b1==b2) (zip r1 r2)
-  where
-    r1 = (map (\ v -> evl v f1) (allVals f1))
-    r2 = (map (\ v -> evl v f2) (allVals f2))
 
 rdcnj :: Form -> Form
 rdcnj (Prop x) = Prop x
