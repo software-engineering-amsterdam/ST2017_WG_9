@@ -36,11 +36,11 @@ findNotEvals :: Form -> [Valuation]
 findNotEvals f = filter (\x -> not(evl x f)) (allVals f)
 
 buildDsj :: Valuation -> Form
-buildDsj l = Dsj(subForms)
+buildDsj l = Dsj subForms
   where subForms = map (\x -> if snd x then Neg(Prop (fst x)) else Prop (fst x)) l
 
 buildCnf :: [Valuation] -> Form
-buildCnf l = Cnj( map (\x -> buildDsj x) l )
+buildCnf l = Cnj(map buildDsj l)
 
 cnf :: Form -> Form
-cnf f = buildCnf (findNotEvals f)
+cnf f = buildCnf(findNotEvals f)
