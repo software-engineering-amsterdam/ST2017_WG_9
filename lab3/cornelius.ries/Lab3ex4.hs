@@ -74,8 +74,7 @@ genForm :: Gen Form
 genForm =
       do
         size <- elements [1..10]
-        f <- genFormS size
-        return f
+        genFormS size
 
 -- Tree building function
 genFormS :: Int -> Gen Form
@@ -83,8 +82,7 @@ genFormS n =
           if n == 1
             then do
               p <- elements [p,q,r]
-              rp <- randomNegation p
-              return rp
+              randomNegation p
           else do
             c <- elements [0..3]
             f1 <- genFormS (n-1)
@@ -94,8 +92,7 @@ genFormS n =
                          1 -> Dsj[f1, f2]
                          2 -> Impl f1 f2
                          _ -> Equiv f1 f2
-            nf <- randomNegation f
-            return nf
+            randomNegation f
 
 randomNegation :: Form -> Gen Form
 randomNegation f =
