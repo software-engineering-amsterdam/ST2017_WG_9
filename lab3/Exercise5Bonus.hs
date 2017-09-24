@@ -1,5 +1,23 @@
 module Exercise5Bonus where
 
+{--
+time spent: 2h (cnf2cls was quickly written (30m, but unpacking generated cnfs
+to a minimal form was harder))
+
+Conversion:
+For the cnf2cls function I assume that the provided CNF is in its minimal form
+without redundancies. Otherwise the implementation would be much larger.
+The cnf2cls function passes all elements of the root cnj to the `dsjToClause`
+function, since we assume that every "child" of the root cnj is a dsj.
+
+Testing:
+cls2cnf and cnf2cls can be used to decode and encode. We can therefore test
+both functions if we apply one function first and then the second one (
+input and output should be the same)
+To test these functions we use the text generator of exercise 4. (See bottom)
+
+--}
+
 import Data.List
 import Lecture3
 import Exercise1 (equiv)
@@ -15,21 +33,14 @@ cnfExample :: Form
 cnfExample = Cnj [Dsj [p,r], Dsj [Neg q, r]]
 
 cnfExample2 :: Form
-cnfExample2 = head(parse "*(+(-1 +(-3 -4)) +(-1 +(3 4)) +(1 +(-3 4) +(1 +(3 -4))))")
-
-{--
-
-p1: +(-1 +(-3 -4)) = +(-1 -3 -4)
-p2: +(-1 +(3 4)) = +(-1 3 4)
-p3: +(1 +(-3 4) +(1 +(3 -4))) = +(1 -3 4 1 3 -4)
---}
+cnfExample2 = head(parse "*(+(-1 +(-5 7)) *(+(-1 +(5 7)) +(1 +(5 7))))")
 
 testForm1 = head(parse "+(-1 +(-3 -4)")
 testForm11 = head(parse "+(-1 -3 -4)")
 
 unpackCnf :: Form -> Form
 unpackCnf (Cnj xs) = Cnj (map (\f -> Dsj (nub (getProps f)))  xs)
-unpackCnf f = Cnj []
+unpackCnf f = f
 
 getProps :: Form -> [Form]
 getProps (Neg n) = [Neg n]
@@ -68,8 +79,17 @@ cls2cnf cs = Cnj dsjs
 testExample :: Bool
 testExample =  cls2cnf (cnf2cls cnfExample) == cnfExample
 
+testExample1 :: Bool
+testExample1 =  cls2cnf (cnf2cls (cnf testForm1)) == cnf testForm1
+
+testExample2 :: Bool
+testExample2 =  cls2cnf (cnf2cls (cnf testForm2)) == cnf testForm2
+
 toCnf :: Form -> Form
 toCnf = unpackCnf . cnf
 
 testConversions :: IO()
 testConversions = testFormPredicate 50 (\f -> (cls2cnf (cnf2cls (toCnf f)) `equiv` toCnf f))
+
+testCnfUnpack :: IO()
+testCnfUnpack = testFormPredicate 100 (\f -> cnf f `equiv` unpackCnf(cnf f))
