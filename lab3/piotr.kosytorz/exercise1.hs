@@ -1,4 +1,4 @@
-module Lab3Exercise1 where
+module Exercise1 where
 
 import Data.List
 import System.Random
