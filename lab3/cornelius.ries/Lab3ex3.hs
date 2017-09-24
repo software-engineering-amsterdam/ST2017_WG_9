@@ -4,14 +4,11 @@ import Data.List
 import System.Random
 import Test.QuickCheck
 import Lecture3
+import Lab3ex1
 
--- Time spent: 5h trying to apply the solution from the lecture
-
-equiv :: Form -> Form -> Bool
-equiv f1 f2 = all (\ (b1,b2) -> b1==b2) (zip r1 r2)
-  where
-    r1 = (map (\ v -> evl v f1) (allVals f1))
-    r2 = (map (\ v -> evl v f2) (allVals f2))
+-- Time spent: 6h
+-- 5h trying to apply the solution from the lecture
+-- 1h rewriting cnf with the truth table approach
 
 rdcnj :: Form -> Form
 rdcnj (Prop x) = Prop x
@@ -32,7 +29,18 @@ rddsj (Dsj (x:y:xs))
     | otherwise = Dsj (x:map rddsj (y:xs))
 
 
-cnf :: Form -> Form
-cnf = nnf . arrowfree
+cnft :: Form -> Form
+cnft = nnf . arrowfree
 
-testform1 = Cnj[p, p, q]
+findNotEvals :: Form -> [Valuation]
+findNotEvals f = filter (\x -> not(evl x f)) (allVals f)
+
+buildDsj :: Valuation -> Form
+buildDsj l = Dsj subForms
+  where subForms = map (\x -> if snd x then Neg(Prop (fst x)) else Prop (fst x)) l
+
+buildCnf :: [Valuation] -> Form
+buildCnf l = Cnj(map buildDsj l)
+
+cnf :: Form -> Form
+cnf f = buildCnf(findNotEvals f)

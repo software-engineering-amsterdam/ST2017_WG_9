@@ -6,13 +6,24 @@ import Test.QuickCheck
 import Lecture3
 
 {--
+
+  Time Spent: 1h on implementation and tests
+
   The simplest way to test the parse function would be to parse the test formulas
   and check if the result matches the original one.
 
   Data Form derives Eq, so they are comparable.
 
-  TODO: Write why better than string compare, Data structure is the same implies
-  that all post conditions are met (same length, same truth table...)
+  We chose to go with the equality check down below because it already includes
+  all the other checks:
+    - same datatype
+    - same length
+    - valid formular (is parsable)
+    - equality of the formular
+
+  With the check below we basically test that our parse function can read
+  input produced by the show function.
+
 --}
 
 test :: Form -> Bool
