@@ -2,7 +2,7 @@ module Exercise5Bonus where
 
 import Lecture3
 import Exercise1 (equiv)
-import Exercise3Piotr (cnf)
+import Exercise3 (cnf)
 import Exercise4 (testFormPredicate)
 
 type Clause  = [Int]
