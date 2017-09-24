@@ -3,6 +3,7 @@ module Exercise4 where
 import Data.List
 import System.Random
 import Lecture3
+import Exercise1
 import Exercise3
 
 {--
@@ -113,6 +114,14 @@ testRandomForm depth = do
 {-- Additional tests (testing Ex. 3) --}
 {--
   The idea is to generate a list of random formulas, then generate cnf for those
-  formulas and eventually compare the truth tables of the cnf formulas and the
-  original ones.
+  formulas and eventually check if they are each others equivalents.
 --}
+-- test random form -> parameter is the depth of a tree
+testRandomFormToCnf :: Int -> IO (Bool)
+testRandomFormToCnf depth = do
+  myRandomForm <- randomForm depth  -- Form
+  myRandomFormCnf <- formToIOForm $ cnf myRandomForm
+  return (equiv myRandomForm myRandomFormCnf)
+
+lastTest = all (\y -> return testRandomFormToCnf y
+  ) $ map (\x -> x `mod` 10 + 1) [1..100]
