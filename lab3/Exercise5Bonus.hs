@@ -35,9 +35,6 @@ cnfExample = Cnj [Dsj [p,r], Dsj [Neg q, r]]
 cnfExample2 :: Form
 cnfExample2 = head(parse "*(+(-1 +(-5 7)) *(+(-1 +(5 7)) +(1 +(5 7))))")
 
-testForm1 = head(parse "+(-1 +(-3 -4)")
-testForm11 = head(parse "+(-1 -3 -4)")
-
 unpackCnf :: Form -> Form
 unpackCnf (Cnj xs) = Cnj (map (\f -> Dsj (nub (getProps f)))  xs)
 unpackCnf f = f
@@ -79,17 +76,11 @@ cls2cnf cs = Cnj dsjs
 testExample :: Bool
 testExample =  cls2cnf (cnf2cls cnfExample) == cnfExample
 
-testExample1 :: Bool
-testExample1 =  cls2cnf (cnf2cls (cnf testForm1)) == cnf testForm1
-
-testExample2 :: Bool
-testExample2 =  cls2cnf (cnf2cls (cnf testForm11)) == cnf testForm11
-
 toCnf :: Form -> Form
 toCnf = unpackCnf . cnf
 
 testConversions :: IO()
-testConversions = testFormPredicate 50 (\f -> (cls2cnf (cnf2cls (toCnf f)) `equiv` toCnf f))
+testConversions = testFormPredicate 10 (\f -> (cls2cnf (cnf2cls (toCnf f)) `equiv` toCnf f))
 
 testCnfUnpack :: IO()
-testCnfUnpack = testFormPredicate 100 (\f -> cnf f `equiv` unpackCnf(cnf f))
+testCnfUnpack = testFormPredicate 10 (\f -> cnf f `equiv` unpackCnf(cnf f))
