@@ -83,7 +83,7 @@ testExample1 :: Bool
 testExample1 =  cls2cnf (cnf2cls (cnf testForm1)) == cnf testForm1
 
 testExample2 :: Bool
-testExample2 =  cls2cnf (cnf2cls (cnf testForm2)) == cnf testForm2
+testExample2 =  cls2cnf (cnf2cls (cnf testForm11)) == cnf testForm11
 
 toCnf :: Form -> Form
 toCnf = unpackCnf . cnf
