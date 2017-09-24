@@ -1,5 +1,6 @@
 module Exercise5Bonus where
 
+import Data.List
 import Lecture3
 import Exercise1 (equiv)
 import Exercise3 (cnf)
@@ -12,6 +13,30 @@ type Clauses = [Clause]
 -- Expected output: [[1,3], [-2,3]]
 cnfExample :: Form
 cnfExample = Cnj [Dsj [p,r], Dsj [Neg q, r]]
+
+cnfExample2 :: Form
+cnfExample2 = head(parse "*(+(-1 +(-3 -4)) +(-1 +(3 4)) +(1 +(-3 4) +(1 +(3 -4))))")
+
+{--
+
+p1: +(-1 +(-3 -4)) = +(-1 -3 -4)
+p2: +(-1 +(3 4)) = +(-1 3 4)
+p3: +(1 +(-3 4) +(1 +(3 -4))) = +(1 -3 4 1 3 -4)
+--}
+
+testForm1 = head(parse "+(-1 +(-3 -4)")
+testForm11 = head(parse "+(-1 -3 -4)")
+
+unpackCnf :: Form -> Form
+unpackCnf (Cnj xs) = Cnj (map (\f -> Dsj (nub (getProps f)))  xs)
+unpackCnf f = Cnj []
+
+getProps :: Form -> [Form]
+getProps (Neg n) = [Neg n]
+getProps (Prop j) = [Prop j]
+getProps (Dsj (x:xs)) = getProps x ++ getProps (Dsj xs)
+getProps (Cnj (x:xs)) = getProps x ++ getProps (Cnj xs)
+getProps _  = []
 
 literalToNumber :: Form -> Int
 literalToNumber (Prop j) = j
@@ -43,5 +68,8 @@ cls2cnf cs = Cnj dsjs
 testExample :: Bool
 testExample =  cls2cnf (cnf2cls cnfExample) == cnfExample
 
+toCnf :: Form -> Form
+toCnf = unpackCnf . cnf
+
 testConversions :: IO()
-testConversions = testFormPredicate 10 (\f -> (cls2cnf (cnf2cls (cnf f)) `equiv` cnf f))
+testConversions = testFormPredicate 50 (\f -> (cls2cnf (cnf2cls (toCnf f)) `equiv` toCnf f))

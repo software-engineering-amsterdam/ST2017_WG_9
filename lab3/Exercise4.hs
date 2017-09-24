@@ -1,4 +1,4 @@
-module Exercise4 (testFormPredicate, testCnf, testParse) where
+module Exercise4 (testFormPredicate, testCnf, testParse, testTautology, testContradiction, testEquiv1, testEquiv2) where
 
 {------------------------------------------------------------------------------
 Time spent: 2h (finding a good approach, figuring monads out (again), implement
@@ -13,8 +13,8 @@ properties to test, and carry out the tests, either with your own random formula
 generator or with QuickCheck.
 Deliverables:
 [x] generator for formulas
-[?] sequence of test properties
-[?] test report
+[x] sequence of test properties
+[x] test report
 [x] indication of time spent
 
 Approach:
@@ -33,23 +33,42 @@ The postcondition of the generator is that the outputted function is a valid
 formula. Since the typechecking proofs that the output has to be of type IO Form
 we can assume that every outputted form is valid (see grammar explanation above)
 The only possibility to produce an error is to generate a form with zero
-possible properties.
+possible properties, which the `generateTestForms` function does not allow.
 
 Using the generator to test formulas:
 We can use the testFormPredicate like we used QuickCheck for numbers. In the
 testing section we have tried out multiple predicated from prior exercises.
 
-TODO:
-- Write tests for exercise 1
+Example test report:
+testParse
+Execute 100 tests
+Test passed
+Test passed
+...
+Test passed
+All tests passed
+
+Example Fail: (Test runner shows which tests fails and stops)
+*Exercise4> testFormPredicate 10 (\f -> f `equiv` Neg f)
+Execute 10 tests
+Test failed: *(*(-4 -4 (3<=>5) +(2 2 3 4 3 1 5) *(3 1 2 5 5 2 4 3 1 1) -3
+(2==>3) (4<=>5) -2) +((3<=>3) 4 (4==>3) *(2 5 5 1 1 1 5)) +(-5 +(4 2 4 5 5 5 1 5)
+ 3 (3<=>2) +(2 5 3 2 1 4) +(1 5 2 1 1 2 5 4 4 5) (1<=>4) -4 +(3 3 3 5 3 5 5))
+ (2<=>-4) -(3<=>4) +(*(5 4 3 1 4) 3) -1 ((3<=>4)==>-3) --2)
+
 -------------------------------------------------------------------------------}
 
-import Lecture3 (Form (..), parse)
-import Exercise1 (equiv, tautology)
+import Lecture3 (Form (..), parse, q, p, r)
+import Exercise1 (equiv, tautology, contradiction)
 import System.Random
 import Exercise3 (cnf)
 
 getRandomBoundedInt :: Int -> Int -> IO Int
 getRandomBoundedInt l u = getStdRandom (randomR (l,u))
+
+infix 1 -->
+(-->) :: Bool -> Bool -> Bool
+p --> q = not p || q
 
 {------------------------------------------------------------------------------
                         Implementation
@@ -128,7 +147,7 @@ testFormPredicate n p = do
 
 
 {------------------------------------------------------------------------------
-                            Tests
+                            Using generator to test
 -------------------------------------------------------------------------------}
 
 -- Taken from Exercise 2
@@ -140,3 +159,15 @@ testParse = testFormPredicate 100 _testParse
 
 testCnf :: IO()
 testCnf = testFormPredicate 100 (\f -> equiv (cnf f) f)
+
+testTautology :: IO()
+testTautology = testFormPredicate 100 (\f -> tautology f --> f `equiv` Dsj [q, Neg q])
+
+testContradiction :: IO()
+testContradiction = testFormPredicate 100 (\f -> contradiction f --> f `equiv` Cnj [q, Neg q])
+
+testEquiv1 :: IO()
+testEquiv1 = testFormPredicate 100 (\f -> f `equiv` f)
+
+testEquiv2 :: IO()
+testEquiv2 = testFormPredicate 100 (\f -> not (f `equiv` Neg f))
