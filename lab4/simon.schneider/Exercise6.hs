@@ -3,6 +3,8 @@ module Exercise6 where
 import Lecture4(fix,iterateFix)
 import Data.List
 
+-- Time spent 45m
+
 {--
 Task
 transitive closure of a relation
@@ -40,6 +42,8 @@ trClos r = (r,2) $$ fix (\ f (r1,n) ->
 toRelation :: Ord a => [(a,a)] -> Rel a
 toRelation xs = sort ( nub xs)
 
--- TODO: What is R.R called? (not self composite)
 compositeUnion :: Ord a => Rel a -> Int -> Rel a
 compositeUnion r n = foldl (\ri _ -> toRelation(ri ++ (ri @@ r))) r [1..(n-1)]
+
+run :: Rel Int
+run = trClos [(1,2),(2,3),(3,4)]
