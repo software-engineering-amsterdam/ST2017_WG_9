@@ -5,9 +5,11 @@ Time spent: 1h 30m (Implementation + Reusable tester functions that I could
 also have used for Lab3 - Forms)
 -------------------------------------------------------------------------------}
 
+import Data.List
 import System.Random
 import Lecture2(getRandomInt)
 import SetOrd
+import Test.QuickCheck
 
 exampleSet :: Set Int
 exampleSet = list2set [1,2,4,3,4]
@@ -92,5 +94,37 @@ setPairTester :: Int -> ((Set Int, Set Int) -> Bool) -> IO()
 setPairTester n p = rtester' (generateMany n getRandomSetPair) p
 
 {------------------------------------------------------------------------------
-                    Implementat with QuickCheck (TODO)
+                    Implement with QuickCheck
+
+See: http://www.cse.chalmers.se/~rjmh/QuickCheck/manual.html
+"Test Data Generators: The Type Gen" and "Class Arbitrary"
+
+Benefits: QuickCheck is more flexible than the setTester and the setPairTester
+from above, it also works with functions that take lists of sets with chars (see runQc3)
 -------------------------------------------------------------------------------}
+instance (Ord a, Arbitrary a) => Arbitrary (Set a) where
+    arbitrary = do
+            xs <- arbitrary
+            return (list2set xs)
+
+randomIntSetGenerator :: Gen (Set Int)
+randomIntSetGenerator = do
+    list <- listOf arbitrary
+    return (list2set list)
+
+randomIntSets :: IO (Set Int)
+randomIntSets = generate (randomIntSetGenerator::Gen (Set Int))
+
+qcFunc1 :: Set Int -> Bool
+qcFunc1 _ = True
+
+qcFunc2 :: (Set Int,Set Int) -> Bool
+qcFunc2 _ = True
+
+qcFunc3 :: [Set Char] -> Bool
+qcFunc3 _ = True
+
+runQc1,runQc2,runQc3 :: IO()
+runQc1 = verboseCheck qcFunc1
+runQc2 = verboseCheck qcFunc2
+runQc3 = verboseCheck qcFunc3
