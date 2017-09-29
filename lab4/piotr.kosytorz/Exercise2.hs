@@ -8,7 +8,6 @@ import Data.List
 import System.Random
 import Test.QuickCheck
 import SetOrd
-import Library
 
 -- | Random Set generator from scratch
 -- | ===========================================================================

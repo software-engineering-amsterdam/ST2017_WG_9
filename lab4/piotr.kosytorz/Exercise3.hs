@@ -9,7 +9,6 @@ import System.Random
 import Test.QuickCheck
 import SetOrd
 import Exercise2
-import Library
 
 -- | A ∪ B
 setUnion :: (Ord a) => Set a -> Set a -> Set a
