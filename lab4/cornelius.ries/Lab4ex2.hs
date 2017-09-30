@@ -46,9 +46,10 @@ instance Arbitrary (Set Int) where
 genSet :: Gen (Set Int)
 genSet =
       do
-        size <- elements [1..100]
-        genSetS size emptySet
+        l <- listOf arbitrary
+        return (list2set l)
 
+-- not needed anymore
 genSetS :: Int -> Set Int -> Gen (Set Int)
 genSetS n s =
   if n > 0

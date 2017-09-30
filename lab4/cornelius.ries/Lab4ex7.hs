@@ -42,3 +42,18 @@ testLengthSymClos l = length l <= length (symClos l)
 
 testLengthTrClos :: Rel (Positive Int) -> Bool
 testLengthTrClos l = length l <= length (trClos l)
+
+
+-- For symClos all elements from R should be in symClos R
+testSymClos1 :: Rel (Positive Int) -> Bool
+testSymClos1 l = all (\x -> x `elem` (symClos l)) l
+
+-- For all elements in R there is a symetric element in symClos R
+testSymClos2 :: Rel (Positive Int) -> Bool
+testSymClos2 l = all (\(a,b) -> (b,a) `elem` (symClos l)) l
+
+allSymClosTests :: Rel (Positive Int) -> Bool
+allSymClosTests l = all (\f -> f l) [testLengthSymClos, testSymClos1, testSymClos2]
+
+allSymClosTest :: IO ()
+allSymClosTest = quickCheck allSymClosTests

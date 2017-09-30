@@ -54,7 +54,7 @@ unionSetCom :: Set Int -> Set Int -> Bool
 unionSetCom a b = unionSet a b == unionSet b a
 
 diffSetCom :: Set Int -> Set Int -> Bool
-diffSetCom a b = diffSet a b /= diffSet b a
+diffSetCom a b = if a == b then True else diffSet a b /= diffSet b a
 
 interSetCom:: Set Int -> Set Int -> Bool
 interSetCom a b = interSet a b == interSet b a
