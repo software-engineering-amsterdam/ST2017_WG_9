@@ -9,7 +9,7 @@ import System.Random
 import Test.QuickCheck
 import Lecture4
 
-type Rel a = [(a,a)]
+-- I moved the definition of type Rel to Lecture4.hs
 
 -- | Composition of relations: R ∘ S
 infixr 5 @@

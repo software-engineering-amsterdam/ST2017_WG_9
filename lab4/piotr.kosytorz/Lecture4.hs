@@ -168,3 +168,12 @@ prop_length xs = length xs == length (drawPebble xs)
 sampleF f g =
  do cases <- sample' g
     sequence_ (map (print.f) cases)
+
+type Rel a = [(a,a)]
+
+unionRel :: Rel a -> Rel a -> Rel a
+unionRel a b = a ++ b
+
+-- | checks if a is sub relation of b
+isSubRel :: Eq a => Rel a -> Rel a -> Bool
+isSubRel a b = all (\x -> x `elem` b) a

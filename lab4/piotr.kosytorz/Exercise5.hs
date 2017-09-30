@@ -7,8 +7,9 @@ module Exercise5 where
 import Data.List
 import System.Random
 import Test.QuickCheck
+import Lecture4
 
-type Rel a = [(a,a)]
+-- I moved the definition of type Rel to Lecture4.hs
 
 -- | basically this is enouh, however if there is i.e. a relation is on itself,
 -- | i.e. (4,4), the method will put it twice on the list
