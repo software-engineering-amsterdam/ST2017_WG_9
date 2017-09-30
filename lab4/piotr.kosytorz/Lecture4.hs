@@ -171,6 +171,7 @@ sampleF f g =
 
 type Rel a = [(a,a)]
 
+-- | returns an union of relations a and b
 unionRel :: Rel a -> Rel a -> Rel a
 unionRel a b = a ++ b
 
