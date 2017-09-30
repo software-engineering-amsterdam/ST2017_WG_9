@@ -1,3 +1,5 @@
+module Exercise2 where
+
 import System.Random
 import Test.QuickCheck
 import SetOrd
