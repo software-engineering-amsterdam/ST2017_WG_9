@@ -58,3 +58,23 @@ diffSetCom a b = diffSet a b /= diffSet b a
 
 interSetCom:: Set Int -> Set Int -> Bool
 interSetCom a b = interSet a b == interSet b a
+
+-- test the union Set method
+-- set a should be in union of ab
+-- set b should be in union of ab
+unionSetP :: Set Int -> Set Int -> Bool
+unionSetP a b = subSet a (unionSet a b) && subSet b (unionSet a b)
+
+-- test the diff set
+-- if diff is emtpy and subset a b
+-- or
+-- diff of a b is in a and diff a b is NOT in b
+diffSetP :: Set Int -> Set Int -> Bool
+diffSetP a b = isEmpty(diffSet a b) && subSet a b || subSet (diffSet a b) a && not ( subSet (diffSet a b) b )
+
+
+testAllP :: Set Int -> Set Int -> Bool
+testAllP a b = all (\f -> f a b) [unionSetCom, diffSetCom, interSetCom, unionSetP, diffSetP]
+
+testAll :: IO ()
+testAll = quickCheck testAllP

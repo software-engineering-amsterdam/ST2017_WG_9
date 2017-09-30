@@ -1,6 +1,3 @@
--- taken from https://stackoverflow.com/questions/4826630/type-class-problem-concerning-flexibleinstances
-{-# LANGUAGE FlexibleInstances #-}
-
 module Lab4ex7 where
 
 import Data.List
@@ -39,5 +36,9 @@ genRelS n s =
   else return s
 -}
 
-testProp :: Rel (Positive Int) -> Bool
-testProp l = length l >= 0
+-- The length of symClos and trClos should be equal or larger than original R
+testLengthSymClos :: Rel (Positive Int) -> Bool
+testLengthSymClos l = length l <= length (symClos l)
+
+testLengthTrClos :: Rel (Positive Int) -> Bool
+testLengthTrClos l = length l <= length (trClos l)
