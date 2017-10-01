@@ -102,14 +102,14 @@ converts them to inteter relations.
 Calculating the transtive closure takes long for really long lists, as you
 can see in run1 and run2, but they will both eventually terminate.
 -------------------------------------------------------------------------------}
-relPInt2RelInt :: Rel (Positive Int) -> Rel Int
-relPInt2RelInt r = sort (nub (map (\(Positive i, Positive j) -> (i,j)) r))
+processIntRelation :: Rel Int -> Rel Int
+processIntRelation r = sort (nub r)
 
-qcSymmetricClosure :: Rel (Positive Int) -> Bool
-qcSymmetricClosure r = testSymmetricClosure (relPInt2RelInt r)
+qcSymmetricClosure :: Rel Int -> Bool
+qcSymmetricClosure r = testSymmetricClosure (processIntRelation r)
 
-qcTransitiveClosure :: Rel (Positive Int) -> Bool
-qcTransitiveClosure r = testTranstivieClosure (relPInt2RelInt r)
+qcTransitiveClosure :: Rel Int -> Bool
+qcTransitiveClosure r = testTranstivieClosure (processIntRelation r)
 
 run1, run2 :: IO()
 run1 = verboseCheck qcSymmetricClosure

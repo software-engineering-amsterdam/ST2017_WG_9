@@ -52,4 +52,6 @@ counter examples)
 Explanation on easy counter example: [(1,5)]
 1. [(1,5)] -> sym -> [(1,5),(5,1)] -> trans -> [(1,5),(5,1),(5,5),(1,1)]
 2. [(1,5)] -> trans -> [(1,5)] -> sym -> [(1,5),(5,1)]
+
+As we can see the end result is not the same. 
 -------------------------------------------------------------------------------}

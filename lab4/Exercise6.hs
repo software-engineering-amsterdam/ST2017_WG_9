@@ -24,5 +24,15 @@ r @@ s =
 trClos :: Ord a => Rel a -> Rel a
 trClos r = fp (\x -> (sort.nub) (x ++ (x @@ x))) r
 
+{--
+
+Task
+transitive closure of a relation
+trClos [(1,2),(2,3),(3,4)] should give [(1,2),(1,3),(1,4),(2,3),(2,4),(3,4)]
+
+Exercise6> trClos testRel
+[(1,2),(1,3),(1,4),(2,3),(2,4),(3,4)]
+
+--}
 testRel :: Rel Int
 testRel = [(1,2),(2,3),(3,4)]
