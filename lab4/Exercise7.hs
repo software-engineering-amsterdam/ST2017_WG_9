@@ -102,7 +102,8 @@ converts them to inteter relations.
 Calculating the transtive closure takes long for really long lists, as you
 can see in run1 and run2, but they will both eventually terminate.
 -------------------------------------------------------------------------------}
-processIntRelation :: Rel Int -> Rel Int
+
+rocessIntRelation :: Rel Int -> Rel Int
 processIntRelation r = sort (nub r)
 
 qcSymmetricClosure :: Rel Int -> Bool
