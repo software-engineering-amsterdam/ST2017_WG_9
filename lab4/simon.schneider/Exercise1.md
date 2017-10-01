@@ -1,5 +1,7 @@
 # Haskell road to logic - Chapter 4: Sets, Types and Lists
 
+Time spent reading: 70m
+
 ## Questions
 
 * Why doesnt russels paradox not result in an empty lists?
