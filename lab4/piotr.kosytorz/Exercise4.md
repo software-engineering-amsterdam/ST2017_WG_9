@@ -5,8 +5,3 @@
 ###### (Deliverables: list of questions, indication of time spent.)
 
 Time spent: 1h
-
-Questions:
-
-- Question 1?
-- Question 2?
