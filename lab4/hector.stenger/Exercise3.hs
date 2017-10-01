@@ -6,6 +6,8 @@ import SetOrd
 
 {- Time spend: 2 hours -}
 
+{- Got inspired by https://stackoverflow.com/questions/27471710/checking-if-2-list-have-any-equal-element-haskell -}
+{- to use the function intersect -}
 setIntersection :: Ord a => Set a -> Set a -> Set a
 setIntersection (Set x) (Set y) = list2set $ intersect x y
 

@@ -34,6 +34,8 @@ testSet _ = True
 
 testRunner = quickCheck testSet
 
+{- Got inspired by http://geekyplatypus.com/y-u-have-no-code-samples-quickcheck/ -}
+{- on how to use arbitrary on the list2set method -}
 instance (Ord a, Arbitrary a) => Arbitrary (Set a) where
     arbitrary = do
         list <- arbitrary
