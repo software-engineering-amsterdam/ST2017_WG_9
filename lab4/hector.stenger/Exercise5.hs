@@ -1,4 +1,4 @@
-module Exercis5 where
+module Exercise5 where
 
 import SetOrd
 import Exercise3
@@ -18,5 +18,7 @@ invRel (x:xs) = invRel [x] ++ invRel xs
 {- we therefor need to filter the inverse relation -}
 symClos :: Ord a => Rel a -> Rel a
 symClos x = x ++ inverse
-    where inverse = filter (\n -> not $ elem n x) $ invRel x
+    where inverse = filter (dupRel x) $ invRel x
 
+dupRel :: Ord a => Rel a -> (a,a) -> Bool
+dupRel xs = (\x -> not $ elem x xs)
