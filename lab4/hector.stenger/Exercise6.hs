@@ -3,6 +3,8 @@ module Exercise6 where
 import Exercise5
 import SetOrd
 
+{- Time spend: 1 hours -}
+
 infixr 5 @@
 (@@) :: Eq a => Rel a -> Rel a -> Rel a
 r @@ s =
