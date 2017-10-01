@@ -1,3 +1,5 @@
+module Exercise3 where
+
 import System.Random
 import Test.QuickCheck
 import Data.List
