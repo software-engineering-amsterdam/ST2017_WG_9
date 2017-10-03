@@ -2,7 +2,7 @@ module Exercise2 where
 
 -- | Exercise1
 -- | ===========================================================================
--- | Time spent: 1h
+-- | Time spent: 2h
 
 -- | Note: modifications are marked and explained
 -- | Note2: report at the bottom of the file

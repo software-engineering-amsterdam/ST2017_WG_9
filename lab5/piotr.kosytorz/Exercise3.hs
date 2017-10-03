@@ -1,13 +1,6 @@
+module Exercise3
 
-module Exercise1 where
-
--- | Exercise1
--- | ===========================================================================
--- | Time spent: 2h
-
--- | Note: modifications are marked and explained
--- | Note2: solution for the puzzle at the bottom of the script or by running
--- | main
+where
 
 import Data.List
 import System.Random
@@ -17,28 +10,12 @@ type Column = Int
 type Value  = Int
 type Grid   = [[Value]]
 
--- | NRC sudoku
--- | ===========================================================================
--- | The sudoku generator / solver implements blocks which are further use do
--- | set constrains and prune values from grid. What I do is copying the logic
--- | that stands behind the blocks and apply it to the four NRC blocks that we
--- | have to consider.
-
 positions, values :: [Int]
 positions = [1..9]
 values    = [1..9]
 
 blocks :: [[Int]]
 blocks = [[1..3],[4..6],[7..9]]
-
--- | Modification begin
--- | ===========================================================================
--- | nrcBlocks - is an adaptation of blocks of 3 rows and 3 columns anchored in
--- | points: (2,2), (2,6), (6,2), (6,6)
-nrcBlocks :: [[Int]]
-nrcBlocks = [[2..4],[6..8]]
--- | ===========================================================================
--- | Modification end
 
 showVal :: Value -> String
 showVal 0 = " "
@@ -88,26 +65,9 @@ showSudoku = showGrid . sud2grid
 bl :: Int -> [Int]
 bl x = concat $ filter (elem x) blocks
 
--- | Modification begin
--- | ===========================================================================
--- | nrcBl - returns the NRC block to which a given element (x) belong
-nrcBl :: Int -> [Int]
-nrcBl x = concat $ filter (elem x) nrcBlocks
--- | ===========================================================================
--- | Modification end
-
 subGrid :: Sudoku -> (Row,Column) -> [Value]
 subGrid s (r,c) =
   [ s (r',c') | r' <- bl r, c' <- bl c ]
-
--- | Modification begin
--- | ===========================================================================
--- | subNrcGrid - return sub-grid of nrc block
-subNrcGrid :: Sudoku -> (Row,Column) -> [Value]
-subNrcGrid s (r,c) =
-  [ s (r',c') | r' <- nrcBl r, c' <- nrcBl c ]
--- | ===========================================================================
--- | Modification end
 
 freeInSeq :: [Value] -> [Value]
 freeInSeq seq = values \\ seq
@@ -123,25 +83,11 @@ freeInColumn s c =
 freeInSubgrid :: Sudoku -> (Row,Column) -> [Value]
 freeInSubgrid s (r,c) = freeInSeq (subGrid s (r,c))
 
--- | Modification begin
--- | ===========================================================================
--- | freeInNrcSubgrid - returns values of free elements in an NRC grid
-freeInNrcSubgrid :: Sudoku -> (Row,Column) -> [Value]
-freeInNrcSubgrid s (r,c) = freeInSeq (subNrcGrid s (r,c))
--- | ===========================================================================
--- | Modification end
-
 freeAtPos :: Sudoku -> (Row,Column) -> [Value]
 freeAtPos s (r,c) =
   (freeInRow s r)
    `intersect` (freeInColumn s c)
    `intersect` (freeInSubgrid s (r,c))
--- | Modification begin
--- | ===========================================================================
--- | Additional intersection with freeInNrcSubgrid
-   `intersect` (freeInNrcSubgrid s (r,c))
--- | ===========================================================================
--- | Modification end
 
 injective :: Eq a => [a] -> Bool
 injective xs = nub xs == xs
@@ -158,15 +104,6 @@ subgridInjective :: Sudoku -> (Row,Column) -> Bool
 subgridInjective s (r,c) = injective vs where
    vs = filter (/= 0) (subGrid s (r,c))
 
--- | Modification begin
--- | ===========================================================================
--- | nrcSubgridInjective - checks whether NRC block/sub-grid is injective
-nrcSubgridInjective :: Sudoku -> (Row,Column) -> Bool
-nrcSubgridInjective s (r,c) = injective vs where
-  vs = filter (/= 0) (subNrcGrid s (r,c))
--- | ===========================================================================
--- | Modification end
-
 consistent :: Sudoku -> Bool
 consistent s = and $
                [ rowInjective s r |  r <- positions ]
@@ -175,14 +112,6 @@ consistent s = and $
                 ++
                [ subgridInjective s (r,c) |
                     r <- [1,4,7], c <- [1,4,7]]
--- | Modification begin
--- | ===========================================================================
--- | Additional consistency check for NRC blocks
-                ++
-               [ nrcSubgridInjective s (r,c) |
-                    r <- [2,6], c <- [2,6]]
--- | ===========================================================================
--- | Modification end
 
 extend :: Sudoku -> ((Row,Column),Value) -> Sudoku
 extend = update
@@ -214,25 +143,10 @@ prune (r,c,v) ((x,y,zs):rest)
   | c == y = (x,y,zs\\[v]) : prune (r,c,v) rest
   | sameblock (r,c) (x,y) =
         (x,y,zs\\[v]) : prune (r,c,v) rest
--- | Modification begin
--- | ===========================================================================
--- | Additional case for NRC blocks
-  | sameNrcBlock (r,c) (x,y) =
-        (x,y,zs\\[v]) : prune (r,c,v) rest
--- | ===========================================================================
--- | Modification end
   | otherwise = (x,y,zs) : prune (r,c,v) rest
 
 sameblock :: (Row,Column) -> (Row,Column) -> Bool
 sameblock (r,c) (x,y) = bl r == bl x && bl c == bl y
-
--- | Modification begin
--- | ===========================================================================
--- | Checks whether (a,b) and (c,d) are in the same NRC block
-sameNrcBlock :: (Row,Column) -> (Row,Column) -> Bool
-sameNrcBlock (r,c) (x,y) = nrcBl r == nrcBl x && nrcBl c == nrcBl y
--- | ===========================================================================
--- | Modification end
 
 initNode :: Grid -> [Node]
 initNode gr = let s = grid2sud gr in
@@ -343,21 +257,6 @@ example5 = [[1,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,8,0],
             [0,0,0,0,0,0,0,0,9]]
 
--- | Puzzle to solve (from exercise)
--- | ===========================================================================
-puzzle :: Grid
-puzzle = [[0,0,0,3,0,0,0,0,0],
-          [0,0,0,7,0,0,3,0,0],
-          [2,0,0,0,0,0,0,0,8],
-          [0,0,6,0,0,5,0,0,0],
-          [0,9,1,6,0,0,0,0,0],
-          [3,0,0,0,7,1,2,0,0],
-          [0,0,0,0,0,0,0,3,1],
-          [0,8,0,0,4,0,0,0,0],
-          [0,0,2,0,0,0,0,0,0]]
--- | ===========================================================================
--- | end puzzle
-
 emptyN :: Node
 emptyN = (\ _ -> 0,constraints (\ _ -> 0))
 
@@ -447,21 +346,12 @@ genProblem n = do ys <- randomize xs
                   return (minimalize n ys)
    where xs = filledPositions (fst n)
 
-main :: IO[()]
-main = solveAndShow puzzle
+isMinimal :: Node -> Bool
+isMinimal n = True
 
--- | Solution for the puzzle
--- | ===========================================================================
--- +-------+-------+-------+
--- | 4 7 8 | 3 9 2 | 6 1 5 |
--- | 6 1 9 | 7 5 8 | 3 2 4 |
--- | 2 3 5 | 4 1 6 | 9 7 8 |
--- +-------+-------+-------+
--- | 7 2 6 | 8 3 5 | 1 4 9 |
--- | 8 9 1 | 6 2 4 | 7 5 3 |
--- | 3 5 4 | 9 7 1 | 2 8 6 |
--- +-------+-------+-------+
--- | 5 6 7 | 2 8 9 | 4 3 1 |
--- | 9 8 3 | 1 4 7 | 5 6 2 |
--- | 1 4 2 | 5 6 3 | 8 9 7 |
--- +-------+-------+-------+
+main :: IO ()
+main = do [r] <- rsolveNs [emptyN]
+          showNode r
+          s  <- genProblem r
+          showNode s
+          if isMinimal s then putStrLn("YES") else putStrLn("NO")
