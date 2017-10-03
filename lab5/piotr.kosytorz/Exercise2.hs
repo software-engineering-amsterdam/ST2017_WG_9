@@ -1,12 +1,13 @@
-module Exercise1 where
+module Exercise2 where
 
 -- | Exercise1
 -- | ===========================================================================
--- | Time spent: 2h
+-- | Time spent: 1h
 
 -- | Note: modifications are marked and explained
--- | Note2: solution for the puzzle at the bottom of the script or by running
--- | main
+-- | Note2: report at the bottom of the file
+-- | Note3: NRC modifications are commented. You can enable them by
+-- | removing comments from lines that start with "--[nrc]"
 
 import Data.List
 import System.Random
@@ -16,12 +17,13 @@ type Column = Int
 type Value  = Int
 type Grid   = [[Value]]
 
--- | NRC sudoku
+-- | Modification begin
 -- | ===========================================================================
--- | The sudoku generator / solver implements blocks which are further use do
--- | set constrains and prune values from grid. What I do is copying the logic
--- | that stands behind the blocks and apply it to the four NRC blocks that we
--- | have to consider.
+-- | Definitions from Exercise2
+type Position = (Row,Column)
+type Constrnt = [[Position]]
+-- | ===========================================================================
+-- | Modification end
 
 positions, values :: [Int]
 positions = [1..9]
@@ -34,10 +36,37 @@ blocks = [[1..3],[4..6],[7..9]]
 -- | ===========================================================================
 -- | nrcBlocks - is an adaptation of blocks of 3 rows and 3 columns anchored in
 -- | points: (2,2), (2,6), (6,2), (6,6)
-nrcBlocks :: [[Int]]
-nrcBlocks = [[2..4],[6..8]]
+-- | ===========================================================================
+--[nrc] nrcBlocks :: [[Int]]
+--[nrc] nrcBlocks = [[2..4],[6..8]]
 -- | ===========================================================================
 -- | Modification end
+
+-- | Modification begin
+-- | ===========================================================================
+-- | Constrains from Exercise2
+rowConstrnt = [[(r,c)| c <- values ] | r <- values ]
+columnConstrnt = [[(r,c)| r <- values ] | c <- values ]
+blockConstrnt = [[(r,c)| r <- b1, c <- b2 ] | b1 <- blocks, b2 <- blocks ]
+-- | NRC constraint (to show the difference)
+-- | ===========================================================================
+--[nrc] nrcConstrnt = [[(r,c)| r <- b1, c <- b2 ] | b1 <- nrcBlocks, b2 <- nrcBlocks ]
+-- | ===========================================================================
+-- | Modification end
+
+-- | Helper
+-- | ===========================================================================
+-- | union of elements of a list
+unite:: (Eq a) => [[a]] -> [a]
+unite = foldl1 union
+
+-- | Modification begin
+-- | ===========================================================================
+-- | list of constrains
+constrnts = [rowConstrnt, columnConstrnt, blockConstrnt {--[nrc] ,nrcConstrnt --} ]
+-- | ===========================================================================
+-- | Modification end
+
 
 showVal :: Value -> String
 showVal 0 = " "
@@ -90,23 +119,15 @@ bl x = concat $ filter (elem x) blocks
 -- | Modification begin
 -- | ===========================================================================
 -- | nrcBl - returns the NRC block to which a given element (x) belong
-nrcBl :: Int -> [Int]
-nrcBl x = concat $ filter (elem x) nrcBlocks
+-- | ===========================================================================
+--[nrc] nrcBl :: Int -> [Int]
+--[nrc] nrcBl x = concat $ filter (elem x) nrcBlocks
 -- | ===========================================================================
 -- | Modification end
 
 subGrid :: Sudoku -> (Row,Column) -> [Value]
 subGrid s (r,c) =
   [ s (r',c') | r' <- bl r, c' <- bl c ]
-
--- | Modification begin
--- | ===========================================================================
--- | subNrcGrid - return sub-grid of nrc block
-subNrcGrid :: Sudoku -> (Row,Column) -> [Value]
-subNrcGrid s (r,c) =
-  [ s (r',c') | r' <- nrcBl r, c' <- nrcBl c ]
--- | ===========================================================================
--- | Modification end
 
 freeInSeq :: [Value] -> [Value]
 freeInSeq seq = values \\ seq
@@ -122,23 +143,20 @@ freeInColumn s c =
 freeInSubgrid :: Sudoku -> (Row,Column) -> [Value]
 freeInSubgrid s (r,c) = freeInSeq (subGrid s (r,c))
 
--- | Modification begin
--- | ===========================================================================
--- | freeInNrcSubgrid - returns values of free elements in an NRC grid
-freeInNrcSubgrid :: Sudoku -> (Row,Column) -> [Value]
-freeInNrcSubgrid s (r,c) = freeInSeq (subNrcGrid s (r,c))
--- | ===========================================================================
--- | Modification end
-
 freeAtPos :: Sudoku -> (Row,Column) -> [Value]
 freeAtPos s (r,c) =
   (freeInRow s r)
    `intersect` (freeInColumn s c)
    `intersect` (freeInSubgrid s (r,c))
+
 -- | Modification begin
 -- | ===========================================================================
--- | Additional intersection with freeInNrcSubgrid
-   `intersect` (freeInNrcSubgrid s (r,c))
+-- | Constrains from Exercise2
+freeAtPos' :: Sudoku -> Position -> Constrnt -> [Value]
+freeAtPos' s (r,c) xs = let
+    ys = filter (elem (r,c)) xs
+  in
+    foldl1 intersect (map ((values \\) . map s) ys)
 -- | ===========================================================================
 -- | Modification end
 
@@ -157,15 +175,6 @@ subgridInjective :: Sudoku -> (Row,Column) -> Bool
 subgridInjective s (r,c) = injective vs where
    vs = filter (/= 0) (subGrid s (r,c))
 
--- | Modification begin
--- | ===========================================================================
--- | nrcSubgridInjective - checks whether NRC block/sub-grid is injective
-nrcSubgridInjective :: Sudoku -> (Row,Column) -> Bool
-nrcSubgridInjective s (r,c) = injective vs where
-  vs = filter (/= 0) (subNrcGrid s (r,c))
--- | ===========================================================================
--- | Modification end
-
 consistent :: Sudoku -> Bool
 consistent s = and $
                [ rowInjective s r |  r <- positions ]
@@ -174,14 +183,6 @@ consistent s = and $
                 ++
                [ subgridInjective s (r,c) |
                     r <- [1,4,7], c <- [1,4,7]]
--- | Modification begin
--- | ===========================================================================
--- | Additional consistency check for NRC blocks
-                ++
-               [ nrcSubgridInjective s (r,c) |
-                    r <- [2,6], c <- [2,6]]
--- | ===========================================================================
--- | Modification end
 
 extend :: Sudoku -> ((Row,Column),Value) -> Sudoku
 extend = update
@@ -215,9 +216,10 @@ prune (r,c,v) ((x,y,zs):rest)
         (x,y,zs\\[v]) : prune (r,c,v) rest
 -- | Modification begin
 -- | ===========================================================================
--- | Additional case for NRC blocks
-  | sameNrcBlock (r,c) (x,y) =
-        (x,y,zs\\[v]) : prune (r,c,v) rest
+-- | sameNrcBlock - checks if two elem are in the same nrc block
+-- | ===========================================================================
+--[nrc]   | sameNrcBlock (r,c) (x,y) =
+--[nrc]         (x,y,zs\\[v]) : prune (r,c,v) rest
 -- | ===========================================================================
 -- | Modification end
   | otherwise = (x,y,zs) : prune (r,c,v) rest
@@ -227,9 +229,10 @@ sameblock (r,c) (x,y) = bl r == bl x && bl c == bl y
 
 -- | Modification begin
 -- | ===========================================================================
--- | Checks whether (a,b) and (c,d) are in the same NRC block
-sameNrcBlock :: (Row,Column) -> (Row,Column) -> Bool
-sameNrcBlock (r,c) (x,y) = nrcBl r == nrcBl x && nrcBl c == nrcBl y
+-- | sameNrcBlock - checks if two elem are in the same nrc block
+-- | ===========================================================================
+--[nrc] sameNrcBlock :: (Row,Column) -> (Row,Column) -> Bool
+--[nrc] sameNrcBlock (r,c) (x,y) = nrcBl r == nrcBl x && nrcBl c == nrcBl y
 -- | ===========================================================================
 -- | Modification end
 
@@ -243,13 +246,19 @@ openPositions s = [ (r,c) | r <- positions,
                             c <- positions,
                             s (r,c) == 0 ]
 
+-- | compares lengt of lists (that are the 3rd element of the two touples in )
 length3rd :: (a,b,[c]) -> (a,b,[c]) -> Ordering
 length3rd (_,_,zs) (_,_,zs') = compare (length zs) (length zs')
 
 constraints :: Sudoku -> [Constraint]
 constraints s = sortBy length3rd
-    [(r,c, freeAtPos s (r,c)) |
-                       (r,c) <- openPositions s ]
+-- | Modification begin
+-- | ===========================================================================
+--  [(r,c, freeAtPos s (r,c)) |
+  [(r,c, freeAtPos' s (r,c) (unite constrnts) ) | -- constrnts is defined at the top of the file
+-- | ===========================================================================
+-- | Modification end
+      (r,c) <- openPositions s ]
 
 data Tree a = T a [Tree a] deriving (Eq,Ord,Show)
 
@@ -342,7 +351,7 @@ example5 = [[1,0,0,0,0,0,0,0,0],
             [0,0,0,0,0,0,0,8,0],
             [0,0,0,0,0,0,0,0,9]]
 
--- | Puzzle to solve (from exercise)
+-- | Puzzle (from Exercise1)
 -- | ===========================================================================
 puzzle :: Grid
 puzzle = [[0,0,0,3,0,0,0,0,0],
@@ -446,21 +455,240 @@ genProblem n = do ys <- randomize xs
                   return (minimalize n ys)
    where xs = filledPositions (fst n)
 
-main :: IO[()]
-main = solveAndShow puzzle
+main :: IO ()
+main = do [r] <- rsolveNs [emptyN]
+          showNode r
+          s  <- genProblem r
+          showNode s
 
--- | Solution for the puzzle
+-- | Report1: Extendability comparision
 -- | ===========================================================================
+-- | The definitions proposed by students make the code easier to extend.
+-- | I.ex. extension to NRC needs only an extra constraint:
+-- | nrcConstrnt = [[(r,c)| r <- b1, c <- b2 ] | b1 <- nrcBlocks, b2 <- nrcBlocks ]
+-- | and an update of the prune method. All modifications for NRC are in comments.
+-- | The original version demands more modifications of code.
+
+-- | Report1: Effectivity comparision
+-- | ===========================================================================
+-- | I performed 3 tests for each version (the original one and the refactored one)
+-- | Results are represented in the table below:
+-- |
+-- +-------------------+-------------+-------------+
+-- | Original          | Refactored  |             |
+-- +-------------------+-------------+-------------+
+-- | Test1 time        | 2,22        | 1,86        |
+-- +-------------------+-------------+-------------+
+-- | Test2 time        | 1,46        | 1,55        |
+-- +-------------------+-------------+-------------+
+-- | Test3 time        | 1,56        | 1,52        |
+-- +-------------------+-------------+-------------+
+-- |                   |             |             |
+-- +-------------------+-------------+-------------+
+-- | Test1 memory      | 1446988448  | 1276985640  |
+-- +-------------------+-------------+-------------+
+-- | Test2 memory      | 1027144448  | 1095394032  |
+-- +-------------------+-------------+-------------+
+-- | Test3 memory      | 1066689728  | 1073891952  |
+-- +-------------------+-------------+-------------+
+-- |                   |             |             |
+-- +-------------------+-------------+-------------+
+-- | Avg time          | 1,746666667 | 1,643333333 |
+-- +-------------------+-------------+-------------+
+-- | Avg memory        | 1180274208  | 1148757208  |
+-- +-------------------+-------------+-------------+
+-- |                   |             |             |
+-- +-------------------+-------------+-------------+
+-- | Difference time   | 6%          |             |
+-- +-------------------+-------------+-------------+
+-- | Difference memory | 3%          |             |
+-- +-------------------+-------------+-------------+
+-- |
+-- | The measured difference after 3 tests are between 3% and 6%
+-- | We can assume thus, that the difference is nihil and the versions are
+-- | roughly the same efficient.
+-- |
+-- | ===========================================================================
+-- | Original test results
+-- | ===========================================================================
+-- |
+-- | Original version:
+-- Prelude> :l Lecture5.hs
+-- [1 of 1] Compiling Lecture5         ( Lecture5.hs, interpreted )
+-- Ok, modules loaded: Lecture5.
+-- (0.27 secs,)
+-- *Lecture5> main
 -- +-------+-------+-------+
--- | 4 7 8 | 3 9 2 | 6 1 5 |
--- | 6 1 9 | 7 5 8 | 3 2 4 |
--- | 2 3 5 | 4 1 6 | 9 7 8 |
+-- | 3 9 6 | 1 4 7 | 2 8 5 |
+-- | 2 5 4 | 3 6 8 | 7 1 9 |
+-- | 1 7 8 | 5 9 2 | 4 3 6 |
 -- +-------+-------+-------+
--- | 7 2 6 | 8 3 5 | 1 4 9 |
--- | 8 9 1 | 6 2 4 | 7 5 3 |
--- | 3 5 4 | 9 7 1 | 2 8 6 |
+-- | 7 6 3 | 8 2 4 | 5 9 1 |
+-- | 4 1 5 | 6 3 9 | 8 7 2 |
+-- | 9 8 2 | 7 1 5 | 3 6 4 |
 -- +-------+-------+-------+
--- | 5 6 7 | 2 8 9 | 4 3 1 |
--- | 9 8 3 | 1 4 7 | 5 6 2 |
--- | 1 4 2 | 5 6 3 | 8 9 7 |
+-- | 8 4 7 | 9 5 6 | 1 2 3 |
+-- | 6 2 1 | 4 7 3 | 9 5 8 |
+-- | 5 3 9 | 2 8 1 | 6 4 7 |
 -- +-------+-------+-------+
+-- +-------+-------+-------+
+-- |     6 | 1     | 2     |
+-- |   5   | 3     |   1   |
+-- |       |   9   | 4     |
+-- +-------+-------+-------+
+-- |   6   |   2 4 | 5     |
+-- | 4     |       | 8 7   |
+-- | 9     |       |       |
+-- +-------+-------+-------+
+-- |     7 | 9     |       |
+-- |       |     3 |     8 |
+-- |   3   |   8 1 |   4   |
+-- +-------+-------+-------+
+-- (2.22 secs, 1,446,988,448 bytes)
+-- *Lecture5> main
+-- +-------+-------+-------+
+-- | 4 8 2 | 6 3 9 | 1 5 7 |
+-- | 1 6 5 | 7 8 4 | 9 3 2 |
+-- | 9 3 7 | 1 5 2 | 8 4 6 |
+-- +-------+-------+-------+
+-- | 6 9 1 | 3 2 7 | 4 8 5 |
+-- | 7 5 3 | 8 4 1 | 2 6 9 |
+-- | 2 4 8 | 9 6 5 | 3 7 1 |
+-- +-------+-------+-------+
+-- | 8 1 4 | 2 7 6 | 5 9 3 |
+-- | 3 7 9 | 5 1 8 | 6 2 4 |
+-- | 5 2 6 | 4 9 3 | 7 1 8 |
+-- +-------+-------+-------+
+-- +-------+-------+-------+
+-- |       | 6 3   |   5   |
+-- |       |   8   | 9   2 |
+-- | 9     |   5 2 | 8     |
+-- +-------+-------+-------+
+-- |       |   2 7 |   8   |
+-- |       |       | 2   9 |
+-- |   4 8 |       | 3     |
+-- +-------+-------+-------+
+-- |       |       |       |
+-- |   7   | 5   8 | 6     |
+-- |     6 | 4     |   1   |
+-- +-------+-------+-------+
+-- (1.46 secs, 1,027,144,448 bytes)
+-- *Lecture5> main
+-- +-------+-------+-------+
+-- | 7 6 5 | 8 4 2 | 1 3 9 |
+-- | 3 2 4 | 9 6 1 | 5 8 7 |
+-- | 1 9 8 | 5 7 3 | 2 4 6 |
+-- +-------+-------+-------+
+-- | 9 4 6 | 1 3 5 | 8 7 2 |
+-- | 2 7 1 | 6 8 4 | 9 5 3 |
+-- | 8 5 3 | 7 2 9 | 6 1 4 |
+-- +-------+-------+-------+
+-- | 6 3 2 | 4 1 8 | 7 9 5 |
+-- | 4 8 9 | 2 5 7 | 3 6 1 |
+-- | 5 1 7 | 3 9 6 | 4 2 8 |
+-- +-------+-------+-------+
+-- +-------+-------+-------+
+-- |       |   4 2 |     9 |
+-- |     4 |     1 |       |
+-- |   9   | 5     |     6 |
+-- +-------+-------+-------+
+-- |       |       |   7 2 |
+-- | 2   1 | 6     |     3 |
+-- | 8     |     9 |       |
+-- +-------+-------+-------+
+-- |     2 |       | 7     |
+-- |       |   5   |   6   |
+-- |   1 7 | 3   6 |   2   |
+-- +-------+-------+-------+
+-- (1.56 secs, 1,066,689,728 bytes)
+-- |
+-- | Refactored version:
+-- |
+-- *Lecture5> :l Exercise2
+-- [1 of 1] Compiling Exercise2        ( Exercise2.hs, interpreted )
+-- Ok, modules loaded: Exercise2.
+-- (0.14 secs,)
+-- *Exercise2> main
+-- +-------+-------+-------+
+-- | 7 6 2 | 4 3 5 | 9 8 1 |
+-- | 3 4 1 | 9 8 7 | 5 6 2 |
+-- | 9 8 5 | 1 2 6 | 4 3 7 |
+-- +-------+-------+-------+
+-- | 5 7 8 | 2 9 4 | 3 1 6 |
+-- | 6 2 4 | 7 1 3 | 8 5 9 |
+-- | 1 9 3 | 6 5 8 | 7 2 4 |
+-- +-------+-------+-------+
+-- | 8 1 7 | 5 4 2 | 6 9 3 |
+-- | 4 3 9 | 8 6 1 | 2 7 5 |
+-- | 2 5 6 | 3 7 9 | 1 4 8 |
+-- +-------+-------+-------+
+-- +-------+-------+-------+
+-- | 7     |     5 |     1 |
+-- | 3     |   8   |       |
+-- |       | 1     |   3 7 |
+-- +-------+-------+-------+
+-- | 5 7   |       |     6 |
+-- | 6     |       | 8     |
+-- |   9   |     8 | 7   4 |
+-- +-------+-------+-------+
+-- |       |     2 |   9   |
+-- | 4     |       | 2     |
+-- |   5 6 | 3     |       |
+-- +-------+-------+-------+
+-- (1.86 secs, 1,276,985,640 bytes)
+-- *Exercise2> main
+-- +-------+-------+-------+
+-- | 1 8 7 | 2 5 4 | 9 6 3 |
+-- | 2 6 4 | 3 9 7 | 5 1 8 |
+-- | 9 3 5 | 6 1 8 | 7 4 2 |
+-- +-------+-------+-------+
+-- | 5 2 3 | 8 7 1 | 4 9 6 |
+-- | 7 4 6 | 9 3 2 | 8 5 1 |
+-- | 8 9 1 | 4 6 5 | 2 3 7 |
+-- +-------+-------+-------+
+-- | 3 7 2 | 5 4 6 | 1 8 9 |
+-- | 6 5 8 | 1 2 9 | 3 7 4 |
+-- | 4 1 9 | 7 8 3 | 6 2 5 |
+-- +-------+-------+-------+
+-- +-------+-------+-------+
+-- |       |     4 |   6 3 |
+-- |       |   9   |       |
+-- | 9     | 6     |   4   |
+-- +-------+-------+-------+
+-- |     3 |       |     6 |
+-- |   4   |     2 | 8 5 1 |
+-- |       |     5 | 2     |
+-- +-------+-------+-------+
+-- |       |       | 1     |
+-- | 6 5   |       |   7   |
+-- |     9 | 7 8   |       |
+-- +-------+-------+-------+
+-- (1.55 secs, 1,095,394,032 bytes)
+-- *Exercise2> main
+-- +-------+-------+-------+
+-- | 6 4 3 | 1 7 9 | 5 8 2 |
+-- | 5 1 2 | 4 3 8 | 9 7 6 |
+-- | 9 8 7 | 2 5 6 | 4 1 3 |
+-- +-------+-------+-------+
+-- | 1 6 9 | 5 2 4 | 8 3 7 |
+-- | 8 3 5 | 7 9 1 | 6 2 4 |
+-- | 7 2 4 | 8 6 3 | 1 5 9 |
+-- +-------+-------+-------+
+-- | 2 5 8 | 6 4 7 | 3 9 1 |
+-- | 3 7 6 | 9 1 5 | 2 4 8 |
+-- | 4 9 1 | 3 8 2 | 7 6 5 |
+-- +-------+-------+-------+
+-- +-------+-------+-------+
+-- |     3 |     9 |   8 2 |
+-- |       | 4 3   |       |
+-- | 9   7 |   5 6 |       |
+-- +-------+-------+-------+
+-- |       |   2   |       |
+-- |     5 |       | 6   4 |
+-- | 7 2   |       | 1   9 |
+-- +-------+-------+-------+
+-- |       | 6     |       |
+-- |   7   |   1   | 2   8 |
+-- | 4 9   |       | 7     |
+-- +-------+-------+-------+
+-- (1.52 secs, 1,073,891,952 bytes)
