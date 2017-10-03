@@ -70,26 +70,6 @@ subGrid :: Sudoku -> (Row,Column) -> [Value]
 subGrid s (r,c) =
   [ s (r',c') | r' <- bl r, c' <- bl c ]
 
-freeInSeq :: [Value] -> [Value]
-freeInSeq seq = values \\ seq
-
-freeInRow :: Sudoku -> Row -> [Value]
-freeInRow s r =
-  freeInSeq [ s (r,i) | i <- positions  ]
-
-freeInColumn :: Sudoku -> Column -> [Value]
-freeInColumn s c =
-  freeInSeq [ s (i,c) | i <- positions ]
-
-freeInSubgrid :: Sudoku -> (Row,Column) -> [Value]
-freeInSubgrid s (r,c) = freeInSeq (subGrid s (r,c))
-
-freeAtPos :: Sudoku -> (Row,Column) -> [Value]
-freeAtPos s (r,c) =
-  (freeInRow s r)
-   `intersect` (freeInColumn s c)
-   `intersect` (freeInSubgrid s (r,c))
-
 injective :: Eq a => [a] -> Bool
 injective xs = nub xs == xs
 
@@ -397,7 +377,6 @@ same (x:xs) ys = if x `elem` ys
   readability, maintainability and with that extensibility.
 
   Q2: Which of the two versions is more efficient?
-
 
   maybe use time performance ?
   https://stackoverflow.com/questions/15763050/haskell-measuring-function-performance

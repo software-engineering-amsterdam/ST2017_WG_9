@@ -18,8 +18,8 @@ values    = [1..9]
 blocks :: [[Int]]
 blocks = [[1..3],[4..6],[7..9]]
 
-blocks2 :: [[Int]]
-blocks2 = [[2..4],[6..8]]
+blocksNRC :: [[Int]]
+blocksNRC = [[2..4],[6..8]]
 
 showVal :: Value -> String
 showVal 0 = " "
@@ -69,16 +69,16 @@ showSudoku = showGrid . sud2grid
 bl :: Int -> [Int]
 bl x = concat $ filter (elem x) blocks
 
-bl2 :: Int -> [Int]
-bl2 x = concat $ filter (elem x) blocks2
+blNRC :: Int -> [Int]
+blNRC x = concat $ filter (elem x) blocksNRC
 
 subGrid :: Sudoku -> (Row,Column) -> [Value]
 subGrid s (r,c) =
   [ s (r',c') | r' <- bl r, c' <- bl c ]
 
-subGrid2 :: Sudoku -> (Row,Column) -> [Value]
-subGrid2 s (r,c) =
-    [ s (r',c') | r' <- bl2 r, c' <- bl2 c ]
+subGridNRC :: Sudoku -> (Row,Column) -> [Value]
+subGridNRC s (r,c) =
+    [ s (r',c') | r' <- blNRC r, c' <- blNRC c ]
 
 freeInSeq :: [Value] -> [Value]
 freeInSeq seq = values \\ seq
@@ -94,15 +94,15 @@ freeInColumn s c =
 freeInSubgrid :: Sudoku -> (Row,Column) -> [Value]
 freeInSubgrid s (r,c) = freeInSeq (subGrid s (r,c))
 
-freeInSubgrid2 :: Sudoku -> (Row,Column) -> [Value]
-freeInSubgrid2 s (r,c) = freeInSeq (subGrid2 s (r,c))
+freeInSubgridNRC :: Sudoku -> (Row,Column) -> [Value]
+freeInSubgridNRC s (r,c) = freeInSeq (subGridNRC s (r,c))
 
 freeAtPos :: Sudoku -> (Row,Column) -> [Value]
 freeAtPos s (r,c) =
   (freeInRow s r)
    `intersect` (freeInColumn s c)
    `intersect` (freeInSubgrid s (r,c))
-   `intersect` (freeInSubgrid2 s (r,c))
+   `intersect` (freeInSubgridNRC s (r,c))
 
 injective :: Eq a => [a] -> Bool
 injective xs = nub xs == xs
@@ -119,9 +119,9 @@ subgridInjective :: Sudoku -> (Row,Column) -> Bool
 subgridInjective s (r,c) = injective vs where
    vs = filter (/= 0) (subGrid s (r,c))
 
-subgridInjective2 :: Sudoku -> (Row,Column) -> Bool
-subgridInjective2 s (r,c) = injective vs where
-      vs = filter (/= 0) (subGrid2 s (r,c))
+subgridInjectiveNRC :: Sudoku -> (Row,Column) -> Bool
+subgridInjectiveNRC s (r,c) = injective vs where
+      vs = filter (/= 0) (subGridNRC s (r,c))
 
 consistent :: Sudoku -> Bool
 consistent s = and $
@@ -132,7 +132,7 @@ consistent s = and $
                [ subgridInjective s (r,c) |
                     r <- [1,4,7], c <- [1,4,7]]
                 ++
-                [ subgridInjective2 s (r,c) |
+                [ subgridInjectiveNRC s (r,c) |
                      r <- [2,6], c <- [2,6]]
 
 
@@ -166,15 +166,15 @@ prune (r,c,v) ((x,y,zs):rest)
   | c == y = (x,y,zs\\[v]) : prune (r,c,v) rest
   | sameblock (r,c) (x,y) =
         (x,y,zs\\[v]) : prune (r,c,v) rest
-  | sameblock2 (r,c) (x,y) =
+  | sameblockNRC (r,c) (x,y) =
               (x,y,zs\\[v]) : prune (r,c,v) rest
   | otherwise = (x,y,zs) : prune (r,c,v) rest
 
 sameblock :: (Row,Column) -> (Row,Column) -> Bool
 sameblock (r,c) (x,y) = bl r == bl x && bl c == bl y
 
-sameblock2 :: (Row,Column) -> (Row,Column) -> Bool
-sameblock2 (r,c) (x,y) = bl2 r == bl2 x && bl2 c == bl2 y
+sameblockNRC :: (Row,Column) -> (Row,Column) -> Bool
+sameblockNRC (r,c) (x,y) = blNRC r == blNRC x && blNRC c == blNRC y
 
 initNode :: Grid -> [Node]
 initNode gr = let s = grid2sud gr in
@@ -394,7 +394,7 @@ example  = [[0,0,0,3,0,0,0,0,0],
             [0,8,0,0,4,0,0,0,0],
             [0,0,2,0,0,0,0,0,0]]
 {-
-modified solver 
+modified solver
 for now just duplicated the subgrid solve mechanism
 
 result
