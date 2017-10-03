@@ -16,9 +16,9 @@ import Exercise1
   The code down below is to check wether a generated sudoku can be solved.
 -}
 
-blab :: IO [()]
-blab = do [r] <- rsolveNs [emptyN]
-          showNode r
-          s  <- genProblem r
-          showNode s
-          solveAndShow (sud2grid (fst s))
+main' :: IO [()]
+main' = do [r] <- rsolveNs [emptyN]
+           showNode r
+           s  <- genProblem r
+           showNode s
+           solveAndShow (sud2grid (fst s))
