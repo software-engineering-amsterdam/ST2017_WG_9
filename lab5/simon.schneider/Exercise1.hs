@@ -1,7 +1,35 @@
 
-module Lecture5
+module Exercise1
 
 where
+
+{--
+Time spent: 1h 20m (Read Lecture5 code, understand NRC problem, adjust)
+
+Solution for example problem:
+*Exercise1> solveSampleNrc
++-------+-------+-------+
+| 4 7 8 | 3 9 2 | 6 1 5 |
+| 6 1 9 | 7 5 8 | 3 2 4 |
+| 2 3 5 | 4 1 6 | 9 7 8 |
++-------+-------+-------+
+| 7 2 6 | 8 3 5 | 1 4 9 |
+| 8 9 1 | 6 2 4 | 7 5 3 |
+| 3 5 4 | 9 7 1 | 2 8 6 |
++-------+-------+-------+
+| 5 6 7 | 2 8 9 | 4 3 1 |
+| 9 8 3 | 1 4 7 | 5 6 2 |
+| 1 4 2 | 5 6 3 | 8 9 7 |
++-------+-------+-------+
+
+Changed lines are marked with {--*NEW*--}
+
+Deliverables
+[x] modified Sudoku solver
+[x] solution to the above puzzle
+[x] indication of time spent
+
+--}
 
 import Data.List
 import System.Random
@@ -71,7 +99,6 @@ subGrid :: Sudoku -> (Row,Column) -> [Value]
 subGrid s (r,c) =
   [ s (r',c') | r' <- bl r, c' <- bl c ]
 
-
 freeInSeq :: [Value] -> [Value]
 freeInSeq seq = values \\ seq
 
@@ -91,6 +118,7 @@ freeAtPos s (r,c) =
   (freeInRow s r)
    `intersect` (freeInColumn s c)
    `intersect` (freeInSubgrid s (r,c))
+   `intersect` (freeInNrcSubgrid s (r,c))         {--*NEW*--}
 
 injective :: Eq a => [a] -> Bool
 injective xs = nub xs == xs
@@ -115,6 +143,9 @@ consistent s = and $
                 ++
                [ subgridInjective s (r,c) |
                     r <- [1,4,7], c <- [1,4,7]]
+                ++                                        {--*NEW*--}
+               [ nrcInjective s (r,c) |                   {--*NEW*--}
+                    r <- [2,6], c <- [2,6]]               {--*NEW*--}
 
 extend :: Sudoku -> ((Row,Column),Value) -> Sudoku
 extend = update
@@ -146,6 +177,8 @@ prune (r,c,v) ((x,y,zs):rest)
   | c == y = (x,y,zs\\[v]) : prune (r,c,v) rest
   | sameblock (r,c) (x,y) =
         (x,y,zs\\[v]) : prune (r,c,v) rest
+  | sameNrcBlock (r,c) (x,y) =                            {--*NEW*--}
+        (x,y,zs\\[v]) : prune (r,c,v) rest                {--*NEW*--}
   | otherwise = (x,y,zs) : prune (r,c,v) rest
 
 sameblock :: (Row,Column) -> (Row,Column) -> Bool
@@ -351,29 +384,41 @@ genProblem n = do ys <- randomize xs
 
 main :: IO ()
 main = do [r] <- rsolveNs [emptyN]
+          print (snd (r))
           showNode r
           s  <- genProblem r
+          print (snd (s))
           showNode s
 
-{------------------------------------------------------------------------------
-                          Changed and new functions
-
-------------------------------------------------------------------------------}
+{--
+New functions:
+--}
 
 exampleNrcSud :: Sudoku
 exampleNrcSud = grid2sud exampleNrc
 
-generateMany :: Int -> IO ()
-generateMany n =
-  do
-    let rs = map (\_ -> rsolveNs [emptyN]) [1..n]
-    putStrLn ("Generated " ++ (show (length rs)) ++ " sudokus")
+exampleNrcNodes :: [Node]
+exampleNrcNodes = initNode exampleNrc
 
-generateProblems :: Int -> IO ()
-generateProblems 0 = putStrLn "Finished"
-generateProblems n =
-  do
-    [r] <- rsolveNs [emptyN]
-    s <- genProblem r
-    -- putStrLn ("Generated problem: " ++ (show n))
-    generateProblems (n - 1)
+nrcBlocks :: [[Int]]
+nrcBlocks = [[2..4],[6..8]]
+
+nrcBl :: Int -> [Int]
+nrcBl x = concat $ filter (elem x) nrcBlocks
+
+nrcSubGrid :: Sudoku -> (Row,Column) -> [Value]
+nrcSubGrid s (r,c) =
+ [ s (r',c') | r' <- nrcBl r, c' <- nrcBl c ]
+
+freeInNrcSubgrid :: Sudoku -> (Row,Column) -> [Value]
+freeInNrcSubgrid s (r,c) = freeInSeq (nrcSubGrid s (r,c))
+
+sameNrcBlock :: (Row,Column) -> (Row,Column) -> Bool
+sameNrcBlock (r,c) (x,y) = nrcBl r == nrcBl x && nrcBl c == nrcBl y
+
+solveSampleNrc :: IO [()]
+solveSampleNrc = solveAndShow exampleNrc
+
+nrcInjective :: Sudoku -> (Row,Column) -> Bool
+nrcInjective s (r,c) = injective vs where
+   vs = filter (/= 0) (nrcSubGrid s (r,c))
