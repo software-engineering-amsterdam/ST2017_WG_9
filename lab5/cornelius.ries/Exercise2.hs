@@ -357,7 +357,7 @@ constraints' = [rowConstrnt, columnConstrnt, blockConstrnt]
 
 -- the function returns possible values by combining all constraints
 getPosVals :: Sudoku -> Position -> [Constrnt] -> [Value]
-getPosVals s p l = foldl1 same (map ( \x -> freeAtPos' s p x) l)
+getPosVals s p l = foldl1 intersect (map ( \x -> freeAtPos' s p x) l)
 
 -- https://stackoverflow.com/questions/25760384/how-to-extract-the-same-elements-from-two-lists-in-haskell
 same :: Eq a => [a] -> [a] -> [a]
