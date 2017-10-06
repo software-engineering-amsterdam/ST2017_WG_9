@@ -375,5 +375,7 @@ generateProblems n =
   do
     [r] <- rsolveNs [emptyN]
     s <- genProblem r
-    -- putStrLn ("Generated problem: " ++ (show n))
+    let
+      cs = snd s
+    putStrLn ("Generated problem: " ++ (show n) ++ " Constraints: " ++ (show (length cs)))
     generateProblems (n - 1)

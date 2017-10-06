@@ -14,21 +14,14 @@ this, and write a short test report.
 -------------------------------------------------------------------------------
 Using the GHCI profiler
 *Exercise2> :set +s
-*Exercise2> generateProblems 100
-(1.19 secs, 728,007,736 bytes)
-*Exercise2> generateProblems 1000
-(12.34 secs, 7,291,248,280 bytes)
-*Exercise2> generateProblems 1000
-(12.49 secs, 7,283,036,448 bytes)
---> ~ 12ms and 7MB per problem
-
-*Lecture5> generateProblems 100
-(1.20 secs, 724,384,744 bytes)
-*Lecture5> generateProblems 1000
-(11.84 secs, 7,290,591,952 bytes)
-*Lecture5> generateProblems 1000
-(12.36 secs, 7,273,600,464 bytes)
---> ~ 12ms and 7MB per problem
+*Exercise2> generateProblems 10
+...
+(14.13 secs, 11,037,971,320 bytes)
+--> Average after 5 runs: ~ 14.25 secs, 11.0 GB
+*Lecture5> generateProblems 10
+...
+(14.39 secs, 11,435,602,056 bytes)
+--> Average after 5 runs: ~ 14.29 secs, 11.3 GB
 
 As expected both solutions have roughly the same performance (time and memory)
 One solution iterates over all constraints (Exercise2) whereas the other
@@ -63,9 +56,10 @@ type Column = Int
 type Value  = Int
 type Grid   = [[Value]]
 
-positions, values :: [Int]
-positions = [1..9]
-values    = [1..9]
+{------------------------------------------------------------------------------
+                          Changed / New
+
+------------------------------------------------------------------------------}
 
 rowConstrnt, columnConstrnt, blockConstrnt, allConstrnt :: [[(Int, Int)]]
 rowConstrnt = [[(r,c)| c <- values ] | r <- values ]
@@ -73,6 +67,61 @@ columnConstrnt = [[(r,c)| r <- values ] | c <- values ]
 blockConstrnt = [[(r,c)| r <- b1, c <- b2 ] | b1 <- blocks, b2 <- blocks ]
 --nrcBlockConstrnt = [[(r,c)| r <- b1, c <- b2 ] | b1 <- nrcBlocks, b2 <- nrcBlocks ]
 allConstrnt = nub ( rowConstrnt ++ columnConstrnt ++ blockConstrnt)
+
+consistent :: Sudoku -> Bool
+consistent s = all (\l -> nub (filter (/= 0) l) == filter (/= 0) l) vs
+ where
+   vs = getConstrainedValues s
+
+constraints :: Sudoku -> [Constraint]
+constraints s = sortBy length3rd
+   [(r,c, freeAtPos s (r,c) allConstrnt) |
+                      (r,c) <- openPositions s ]
+
+freeAtPos :: Sudoku -> Position -> Constrnt -> [Value]
+freeAtPos s (r,c) xs = let
+     ys = filter (elem (r,c)) xs
+   in
+     foldl1 intersect (map ((values \\) . map s) ys)
+
+
+getConstrainedValues :: Sudoku -> [[Value]]
+getConstrainedValues s = map (mapPositionsToValues s) allConstrnt
+
+mapPositionsToValues :: Sudoku -> [(Int,Int)] -> [Value]
+mapPositionsToValues s l = map s l
+
+exampleNrcSud :: Sudoku
+exampleNrcSud = grid2sud exampleNrc
+
+generateMany :: Int -> IO ()
+generateMany n =
+  do
+    let rs = map (\_ -> rsolveNs [emptyN]) [1..n]
+    putStrLn ("Generated " ++ (show (length rs)) ++ " sudokus")
+
+generateProblems :: Int -> IO ()
+generateProblems 0 = putStrLn "Finished"
+generateProblems n =
+  do
+    [r] <- rsolveNs [emptyN]
+    s <- genProblem r
+    let
+      cs = snd s
+    putStrLn ("Generated problem: " ++ (show n) ++ " Constraints: " ++ (show (length cs)))
+    generateProblems (n - 1)
+
+
+
+{------------------------------------------------------------------------------
+                              Untouched
+
+------------------------------------------------------------------------------}
+
+positions, values :: [Int]
+positions = [1..9]
+values    = [1..9]
+
 
 blocks :: [[Int]]
 blocks = [[1..3],[4..6],[7..9]]
@@ -146,7 +195,6 @@ freeInColumn s c =
 
 freeInSubgrid :: Sudoku -> (Row,Column) -> [Value]
 freeInSubgrid s (r,c) = freeInSeq (subGrid s (r,c))
-
 
 
 injective :: Eq a => [a] -> Bool
@@ -399,49 +447,3 @@ main = do [r] <- rsolveNs [emptyN]
           showNode r
           s  <- genProblem r
           showNode s
-
-{------------------------------------------------------------------------------
-                          Changed and new functions
-
-------------------------------------------------------------------------------}
-
-consistent :: Sudoku -> Bool
-consistent s = all (\l -> nub (filter (/= 0) l) == filter (/= 0) l) vs
- where
-   vs = getConstrainedValues s
-
-constraints :: Sudoku -> [Constraint]
-constraints s = sortBy length3rd
-   [(r,c, freeAtPos s (r,c) allConstrnt) |
-                      (r,c) <- openPositions s ]
-
-freeAtPos :: Sudoku -> Position -> Constrnt -> [Value]
-freeAtPos s (r,c) xs = let
-     ys = filter (elem (r,c)) xs
-   in
-     foldl1 intersect (map ((values \\) . map s) ys)
-
-
-getConstrainedValues :: Sudoku -> [[Value]]
-getConstrainedValues s = map (mapPositionsToValues s) allConstrnt
-
-mapPositionsToValues :: Sudoku -> [(Int,Int)] -> [Value]
-mapPositionsToValues s l = map s l
-
-exampleNrcSud :: Sudoku
-exampleNrcSud = grid2sud exampleNrc
-
-generateMany :: Int -> IO ()
-generateMany n =
-  do
-    let rs = map (\_ -> rsolveNs [emptyN]) [1..n]
-    putStrLn ("Generated " ++ (show (length rs)) ++ " sudokus")
-
-generateProblems :: Int -> IO ()
-generateProblems 0 = putStrLn "Finished"
-generateProblems n =
-  do
-    [r] <- rsolveNs [emptyN]
-    s <- genProblem r
-    -- putStrLn ("Generated problem: " ++ (show n))
-    generateProblems (n - 1)
