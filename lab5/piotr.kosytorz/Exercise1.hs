@@ -1,4 +1,3 @@
-
 module Exercise1 where
 
 -- | Exercise1
