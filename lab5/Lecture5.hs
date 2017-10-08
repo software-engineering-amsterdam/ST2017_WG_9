@@ -5,7 +5,6 @@ where
 
 import Data.List
 import System.Random
-import ExampleNrc
 
 type Row    = Int
 type Column = Int
@@ -357,11 +356,8 @@ main = do [r] <- rsolveNs [emptyN]
 
 {------------------------------------------------------------------------------
                           Changed and new functions
-
+                          To test performance in EX2
 ------------------------------------------------------------------------------}
-
-exampleNrcSud :: Sudoku
-exampleNrcSud = grid2sud exampleNrc
 
 generateMany :: Int -> IO ()
 generateMany n =

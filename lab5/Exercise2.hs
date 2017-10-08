@@ -35,6 +35,8 @@ Which of the two versions is easier to modify for NRC sudokus, and why?
 This solution is much easier to modify because constraints can easily be added
 to the allConstrnt array (Open-Closed principle). constraints and consitent do
 not have to be touched to add a new constraint.
+The `nrcBlockConstrnt` was removed to measure the performance (Ex2 vs Lab5)
+but as you can see it is very easy to add new constraints.
 
 Deliverables:
 [x] Refactored code (See bottom of file)
@@ -43,10 +45,8 @@ Deliverables:
 
 ------------------------------------------------------------------------------}
 
-
 import Data.List
 import System.Random
-import ExampleNrc
 
 type Position = (Row,Column)
 type Constrnt = [[Position]]
@@ -91,9 +91,6 @@ getConstrainedValues s = map (mapPositionsToValues s) allConstrnt
 mapPositionsToValues :: Sudoku -> [(Int,Int)] -> [Value]
 mapPositionsToValues s l = map s l
 
-exampleNrcSud :: Sudoku
-exampleNrcSud = grid2sud exampleNrc
-
 generateMany :: Int -> IO ()
 generateMany n =
   do
@@ -111,7 +108,8 @@ generateProblems n =
     putStrLn ("Generated problem: " ++ (show n) ++ " Constraints: " ++ (show (length cs)))
     generateProblems (n - 1)
 
-
+nrcBlocks :: [[Int]]
+nrcBlocks = [[2..4],[6..8]]
 
 {------------------------------------------------------------------------------
                               Untouched
@@ -126,8 +124,6 @@ values    = [1..9]
 blocks :: [[Int]]
 blocks = [[1..3],[4..6],[7..9]]
 
-nrcBlocks :: [[Int]]
-nrcBlocks = [[2..4],[6..8]]
 
 showVal :: Value -> String
 showVal 0 = " "
