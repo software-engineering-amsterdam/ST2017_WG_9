@@ -5,6 +5,9 @@ import Data.List.Split
 import Lecture5
 
 {--
+Time: 1h 30m - Research, experiment with diffrent approaches, try out some
+sudokus by hand
+
 Research: "Difficulty Rating of Sudoku Puzzles: An Overview and Evaluation"
 "Figure 3 shows a difference among several
 specific instances – it shows that for easy problem there are
@@ -46,7 +49,7 @@ Medium: difficulty from 215 to 223
 Hard: difficulty from 223 to 246
 
 ------------------------------------------------
-Result:
+Resulting output:
 *Exercise6> mainEx6
 +-------+-------+-------+
 | 1 6 4 | 8 7 3 | 9 5 2 |
