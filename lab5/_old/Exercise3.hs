@@ -1,11 +1,10 @@
 
-module Lecture5
+module Exercise3
 
 where
 
 import Data.List
 import System.Random
-import ExampleNrc
 
 type Row    = Int
 type Column = Int
@@ -70,7 +69,6 @@ bl x = concat $ filter (elem x) blocks
 subGrid :: Sudoku -> (Row,Column) -> [Value]
 subGrid s (r,c) =
   [ s (r',c') | r' <- bl r, c' <- bl c ]
-
 
 freeInSeq :: [Value] -> [Value]
 freeInSeq seq = values \\ seq
@@ -355,27 +353,70 @@ main = do [r] <- rsolveNs [emptyN]
           s  <- genProblem r
           showNode s
 
-{------------------------------------------------------------------------------
-                          Changed and new functions
 
-------------------------------------------------------------------------------}
+--------------------------------------------------------- own code
 
-exampleNrcSud :: Sudoku
-exampleNrcSud = grid2sud exampleNrc
+-- Time Spent: 1h 30m
 
-generateMany :: Int -> IO ()
-generateMany n =
+-- to prove we test 2 properties:
+
+-- for a generated solution there is only one solution
+-- if we erase one more hint there are now more than one solutions
+
+oneSolProp :: Node -> Bool
+oneSolProp n = length (solveNs [n]) == 1
+
+{-
+
+remHintMoreSolProp only the first position is removed
+to further strengten the test we could
+
+- randomize the position that is removed
+  (but since we always have a new sudoku, this is actually the case already)
+- iterate and remove every remaining hint once
+
+-}
+remHintMoreSolProp :: Node -> Bool
+remHintMoreSolProp n = length (solveNs [nr]) > 1
+  where nr = eraseN n (rp !! 0)
+        rp = filledPositions (fst n)
+
+-- to test we check both properties for a generated Sudoku
+testOne :: IO Bool
+testOne = do [r] <- rsolveNs [emptyN]
+             s  <- genProblem r
+             --showNode s
+             if (oneSolProp s && remHintMoreSolProp s) then
+                  return True
+             else
+               do error "Test failed"
+
+testN :: Int -> IO Bool
+testN n =
+  if n == 0 then
+    return True
+  else
+    do
+      t <- testOne
+      t2 <- testN (n-1)
+      return (t && t2)
+
+-- the test function will test the properties on n sudokus
+-- to print the tested sudokus comment in the showNode s in testOne
+test :: Int -> IO ()
+test n =
   do
-    let rs = map (\_ -> rsolveNs [emptyN]) [1..n]
-    putStrLn ("Generated " ++ (show (length rs)) ++ " sudokus")
+    b <- testN n
+    if b == True then
+      print "All tests passed"
+    else
+      print "Failed test"
 
-generateProblems :: Int -> IO ()
-generateProblems 0 = putStrLn "Finished"
-generateProblems n =
-  do
-    [r] <- rsolveNs [emptyN]
-    s <- genProblem r
-    let
-      cs = snd s
-    putStrLn ("Generated problem: " ++ (show n) ++ " Constraints: " ++ (show (length cs)))
-    generateProblems (n - 1)
+{-
+
+output for 100 tested sudokus:
+
+*Exercise3> test 100
+"All tests passed"
+
+-}

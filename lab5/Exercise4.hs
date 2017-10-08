@@ -1,11 +1,10 @@
 
-module Lecture5
+module Exercise4
 
 where
 
 import Data.List
 import System.Random
-import ExampleNrc
 
 type Row    = Int
 type Column = Int
@@ -70,7 +69,6 @@ bl x = concat $ filter (elem x) blocks
 subGrid :: Sudoku -> (Row,Column) -> [Value]
 subGrid s (r,c) =
   [ s (r',c') | r' <- bl r, c' <- bl c ]
-
 
 freeInSeq :: [Value] -> [Value]
 freeInSeq seq = values \\ seq
@@ -355,27 +353,200 @@ main = do [r] <- rsolveNs [emptyN]
           s  <- genProblem r
           showNode s
 
-{------------------------------------------------------------------------------
-                          Changed and new functions
+--------------------------------------------------------- own stuff
 
-------------------------------------------------------------------------------}
+-- Time Spent: 1h on generator
 
-exampleNrcSud :: Sudoku
-exampleNrcSud = grid2sud exampleNrc
+getRandomBlockInt :: IO Int
+getRandomBlockInt = getStdRandom (randomR (0,2))
 
-generateMany :: Int -> IO ()
-generateMany n =
-  do
-    let rs = map (\_ -> rsolveNs [emptyN]) [1..n]
-    putStrLn ("Generated " ++ (show (length rs)) ++ " sudokus")
+generateRandomBlock :: IO (Int,Int)
+generateRandomBlock = do
+  x <- getRandomBlockInt
+  y <- getRandomBlockInt
+  return (x,y)
 
-generateProblems :: Int -> IO ()
-generateProblems 0 = putStrLn "Finished"
-generateProblems n =
-  do
-    [r] <- rsolveNs [emptyN]
-    s <- genProblem r
-    let
-      cs = snd s
-    putStrLn ("Generated problem: " ++ (show n) ++ " Constraints: " ++ (show (length cs)))
-    generateProblems (n - 1)
+generateBlocks :: Int -> [(Int,Int)] -> IO [(Int,Int)]
+generateBlocks n l = do
+  block <- generateRandomBlock
+  if n == 0 then
+    return l
+  else
+    if block `elem` l then
+      generateBlocks n l
+    else
+      generateBlocks (n-1) (block:l)
+
+removeBlocks :: Node -> [(Int,Int)] -> Node
+removeBlocks n [] = n
+removeBlocks n ((a,b):xs) = removeBlocks (eraseNM n posToDel) xs
+    where posToDel = [(x,y) | x <- blocks !! a, y <- blocks !! b]
+
+eraseNM :: Node -> [(Row,Column)] -> Node
+eraseNM  n [] = n
+eraseNM n (x:xs) = eraseNM (eraseN n x) xs
+
+genProblem' :: Int -> Node -> IO Node
+genProblem' i n = do x <- generateBlocks i []
+                     return (removeBlocks n x)
+
+main' :: Int -> IO [()]
+main' i = do [r] <- rsolveNs [emptyN]
+             showNode r
+             s  <- genProblem' i r
+             showNode s
+             solveAndShow (sud2grid (fst s))
+
+{-
+
+  runnin main' with n (where n is Int) will generate a sudoku with n missing
+  blocks and afterwars tries to solve it.
+
+  we are not talking about minimal solutions
+
+  it will always work since we started with a possible solution
+
+  -> after removing more than 1 blocks there are multiple solutions
+
+  Output:
+
+  *Exercise4> main' 1
++-------+-------+-------+
+| 1 3 8 | 7 5 9 | 2 4 6 |
+| 9 5 2 | 4 8 6 | 7 1 3 |
+| 6 4 7 | 3 1 2 | 8 5 9 |
++-------+-------+-------+
+| 5 1 6 | 2 9 7 | 3 8 4 |
+| 7 8 3 | 6 4 1 | 5 9 2 |
+| 2 9 4 | 5 3 8 | 1 6 7 |
++-------+-------+-------+
+| 4 6 5 | 8 2 3 | 9 7 1 |
+| 3 7 9 | 1 6 5 | 4 2 8 |
+| 8 2 1 | 9 7 4 | 6 3 5 |
++-------+-------+-------+
++-------+-------+-------+
+| 1 3 8 | 7 5 9 | 2 4 6 |
+| 9 5 2 | 4 8 6 | 7 1 3 |
+| 6 4 7 | 3 1 2 | 8 5 9 |
++-------+-------+-------+
+|       | 2 9 7 | 3 8 4 |
+|       | 6 4 1 | 5 9 2 |
+|       | 5 3 8 | 1 6 7 |
++-------+-------+-------+
+| 4 6 5 | 8 2 3 | 9 7 1 |
+| 3 7 9 | 1 6 5 | 4 2 8 |
+| 8 2 1 | 9 7 4 | 6 3 5 |
++-------+-------+-------+
++-------+-------+-------+
+| 1 3 8 | 7 5 9 | 2 4 6 |
+| 9 5 2 | 4 8 6 | 7 1 3 |
+| 6 4 7 | 3 1 2 | 8 5 9 |
++-------+-------+-------+
+| 5 1 6 | 2 9 7 | 3 8 4 |
+| 7 8 3 | 6 4 1 | 5 9 2 |
+| 2 9 4 | 5 3 8 | 1 6 7 |
++-------+-------+-------+
+| 4 6 5 | 8 2 3 | 9 7 1 |
+| 3 7 9 | 1 6 5 | 4 2 8 |
+| 8 2 1 | 9 7 4 | 6 3 5 |
++-------+-------+-------+
+[()]
+*Exercise4> main' 2
++-------+-------+-------+
+| 6 2 3 | 4 1 7 | 9 8 5 |
+| 1 8 5 | 6 2 9 | 4 7 3 |
+| 9 4 7 | 8 5 3 | 2 1 6 |
++-------+-------+-------+
+| 8 3 6 | 1 9 2 | 7 5 4 |
+| 5 9 1 | 7 3 4 | 6 2 8 |
+| 4 7 2 | 5 8 6 | 3 9 1 |
++-------+-------+-------+
+| 7 1 4 | 2 6 5 | 8 3 9 |
+| 3 6 8 | 9 7 1 | 5 4 2 |
+| 2 5 9 | 3 4 8 | 1 6 7 |
++-------+-------+-------+
++-------+-------+-------+
+|       | 4 1 7 | 9 8 5 |
+|       | 6 2 9 | 4 7 3 |
+|       | 8 5 3 | 2 1 6 |
++-------+-------+-------+
+| 8 3 6 |       | 7 5 4 |
+| 5 9 1 |       | 6 2 8 |
+| 4 7 2 |       | 3 9 1 |
++-------+-------+-------+
+| 7 1 4 | 2 6 5 | 8 3 9 |
+| 3 6 8 | 9 7 1 | 5 4 2 |
+| 2 5 9 | 3 4 8 | 1 6 7 |
++-------+-------+-------+
++-------+-------+-------+
+| 6 2 3 | 4 1 7 | 9 8 5 |
+| 1 8 5 | 6 2 9 | 4 7 3 |
+| 9 4 7 | 8 5 3 | 2 1 6 |
++-------+-------+-------+
+| 8 3 6 | 1 9 2 | 7 5 4 |
+| 5 9 1 | 7 3 4 | 6 2 8 |
+| 4 7 2 | 5 8 6 | 3 9 1 |
++-------+-------+-------+
+| 7 1 4 | 2 6 5 | 8 3 9 |
+| 3 6 8 | 9 7 1 | 5 4 2 |
+| 2 5 9 | 3 4 8 | 1 6 7 |
++-------+-------+-------+
+[()]
+*Exercise4> main' 3
++-------+-------+-------+
+| 1 6 9 | 8 5 4 | 7 3 2 |
+| 8 5 3 | 1 2 7 | 6 4 9 |
+| 2 7 4 | 3 9 6 | 5 8 1 |
++-------+-------+-------+
+| 6 3 8 | 5 1 9 | 4 2 7 |
+| 9 4 2 | 7 3 8 | 1 6 5 |
+| 7 1 5 | 6 4 2 | 8 9 3 |
++-------+-------+-------+
+| 3 2 6 | 4 7 1 | 9 5 8 |
+| 5 8 7 | 9 6 3 | 2 1 4 |
+| 4 9 1 | 2 8 5 | 3 7 6 |
++-------+-------+-------+
++-------+-------+-------+
+| 1 6 9 | 8 5 4 |       |
+| 8 5 3 | 1 2 7 |       |
+| 2 7 4 | 3 9 6 |       |
++-------+-------+-------+
+| 6 3 8 | 5 1 9 |       |
+| 9 4 2 | 7 3 8 |       |
+| 7 1 5 | 6 4 2 |       |
++-------+-------+-------+
+| 3 2 6 |       | 9 5 8 |
+| 5 8 7 |       | 2 1 4 |
+| 4 9 1 |       | 3 7 6 |
++-------+-------+-------+
++-------+-------+-------+
+| 1 6 9 | 8 5 4 | 7 3 2 |
+| 8 5 3 | 1 2 7 | 6 4 9 |
+| 2 7 4 | 3 9 6 | 5 8 1 |
++-------+-------+-------+
+| 6 3 8 | 5 1 9 | 4 2 7 |
+| 9 4 2 | 7 3 8 | 1 6 5 |
+| 7 1 5 | 6 4 2 | 8 9 3 |
++-------+-------+-------+
+| 3 2 6 | 4 7 1 | 9 5 8 |
+| 5 8 7 | 9 6 3 | 2 1 4 |
+| 4 9 1 | 2 8 5 | 3 7 6 |
++-------+-------+-------+
++-------+-------+-------+
+| 1 6 9 | 8 5 4 | 7 3 2 |
+| 8 5 3 | 1 2 7 | 6 4 9 |
+| 2 7 4 | 3 9 6 | 1 8 5 |
++-------+-------+-------+
+| 6 3 8 | 5 1 9 | 4 2 7 |
+| 9 4 2 | 7 3 8 | 5 6 1 |
+| 7 1 5 | 6 4 2 | 8 9 3 |
++-------+-------+-------+
+| 3 2 6 | 4 7 1 | 9 5 8 |
+| 5 8 7 | 9 6 3 | 2 1 4 |
+| 4 9 1 | 2 8 5 | 3 7 6 |
++-------+-------+-------+
+[(),()]
+
+
+
+-}

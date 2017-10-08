@@ -1,23 +1,133 @@
 
-module Lecture5
+module Exercise2
 
 where
+
+{------------------------------------------------------------------------------
+Time spent: 55m (understand task, implement, think about possible performance
+testing methods, research profiler, implement "generateProblems")
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+Performance results
+Which of the two versions is more efficient? Devise your own testing method for
+this, and write a short test report.
+-------------------------------------------------------------------------------
+Using the GHCI profiler
+*Exercise2> :set +s
+*Exercise2> generateProblems 10
+...
+(14.13 secs, 11,037,971,320 bytes)
+--> Average after 5 runs: ~ 14.25 secs, 11.0 GB
+*Lecture5> generateProblems 10
+...
+(14.39 secs, 11,435,602,056 bytes)
+--> Average after 5 runs: ~ 14.29 secs, 11.3 GB
+
+As expected both solutions have roughly the same performance (time and memory)
+One solution iterates over all constraints (Exercise2) whereas the other
+(Lecture5) checks each constraint individual, both check the same constraints
+once per 'contraints' call.
+
+------------------------------------------------------------------------------
+Code quality
+Which of the two versions is easier to modify for NRC sudokus, and why?
+-------------------------------------------------------------------------------
+This solution is much easier to modify because constraints can easily be added
+to the allConstrnt array (Open-Closed principle). constraints and consitent do
+not have to be touched to add a new constraint.
+
+Deliverables:
+[x] Refactored code (See bottom of file)
+[x] test report
+[x] indication of time spent.
+
+------------------------------------------------------------------------------}
+
 
 import Data.List
 import System.Random
 import ExampleNrc
+
+type Position = (Row,Column)
+type Constrnt = [[Position]]
 
 type Row    = Int
 type Column = Int
 type Value  = Int
 type Grid   = [[Value]]
 
+{------------------------------------------------------------------------------
+                          Changed / New
+
+------------------------------------------------------------------------------}
+
+rowConstrnt, columnConstrnt, blockConstrnt, allConstrnt :: [[(Int, Int)]]
+rowConstrnt = [[(r,c)| c <- values ] | r <- values ]
+columnConstrnt = [[(r,c)| r <- values ] | c <- values ]
+blockConstrnt = [[(r,c)| r <- b1, c <- b2 ] | b1 <- blocks, b2 <- blocks ]
+--nrcBlockConstrnt = [[(r,c)| r <- b1, c <- b2 ] | b1 <- nrcBlocks, b2 <- nrcBlocks ]
+allConstrnt = nub ( rowConstrnt ++ columnConstrnt ++ blockConstrnt)
+
+consistent :: Sudoku -> Bool
+consistent s = all (\l -> nub (filter (/= 0) l) == filter (/= 0) l) vs
+ where
+   vs = getConstrainedValues s
+
+constraints :: Sudoku -> [Constraint]
+constraints s = sortBy length3rd
+   [(r,c, freeAtPos s (r,c) allConstrnt) |
+                      (r,c) <- openPositions s ]
+
+freeAtPos :: Sudoku -> Position -> Constrnt -> [Value]
+freeAtPos s (r,c) xs = let
+     ys = filter (elem (r,c)) xs
+   in
+     foldl1 intersect (map ((values \\) . map s) ys)
+
+
+getConstrainedValues :: Sudoku -> [[Value]]
+getConstrainedValues s = map (mapPositionsToValues s) allConstrnt
+
+mapPositionsToValues :: Sudoku -> [(Int,Int)] -> [Value]
+mapPositionsToValues s l = map s l
+
+exampleNrcSud :: Sudoku
+exampleNrcSud = grid2sud exampleNrc
+
+generateMany :: Int -> IO ()
+generateMany n =
+  do
+    let rs = map (\_ -> rsolveNs [emptyN]) [1..n]
+    putStrLn ("Generated " ++ (show (length rs)) ++ " sudokus")
+
+generateProblems :: Int -> IO ()
+generateProblems 0 = putStrLn "Finished"
+generateProblems n =
+  do
+    [r] <- rsolveNs [emptyN]
+    s <- genProblem r
+    let
+      cs = snd s
+    putStrLn ("Generated problem: " ++ (show n) ++ " Constraints: " ++ (show (length cs)))
+    generateProblems (n - 1)
+
+
+
+{------------------------------------------------------------------------------
+                              Untouched
+
+------------------------------------------------------------------------------}
+
 positions, values :: [Int]
 positions = [1..9]
 values    = [1..9]
 
+
 blocks :: [[Int]]
 blocks = [[1..3],[4..6],[7..9]]
+
+nrcBlocks :: [[Int]]
+nrcBlocks = [[2..4],[6..8]]
 
 showVal :: Value -> String
 showVal 0 = " "
@@ -86,11 +196,6 @@ freeInColumn s c =
 freeInSubgrid :: Sudoku -> (Row,Column) -> [Value]
 freeInSubgrid s (r,c) = freeInSeq (subGrid s (r,c))
 
-freeAtPos :: Sudoku -> (Row,Column) -> [Value]
-freeAtPos s (r,c) =
-  (freeInRow s r)
-   `intersect` (freeInColumn s c)
-   `intersect` (freeInSubgrid s (r,c))
 
 injective :: Eq a => [a] -> Bool
 injective xs = nub xs == xs
@@ -107,14 +212,7 @@ subgridInjective :: Sudoku -> (Row,Column) -> Bool
 subgridInjective s (r,c) = injective vs where
    vs = filter (/= 0) (subGrid s (r,c))
 
-consistent :: Sudoku -> Bool
-consistent s = and $
-               [ rowInjective s r |  r <- positions ]
-                ++
-               [ colInjective s c |  c <- positions ]
-                ++
-               [ subgridInjective s (r,c) |
-                    r <- [1,4,7], c <- [1,4,7]]
+
 
 extend :: Sudoku -> ((Row,Column),Value) -> Sudoku
 extend = update
@@ -163,11 +261,6 @@ openPositions s = [ (r,c) | r <- positions,
 
 length3rd :: (a,b,[c]) -> (a,b,[c]) -> Ordering
 length3rd (_,_,zs) (_,_,zs') = compare (length zs) (length zs')
-
-constraints :: Sudoku -> [Constraint]
-constraints s = sortBy length3rd
-    [(r,c, freeAtPos s (r,c)) |
-                       (r,c) <- openPositions s ]
 
 data Tree a = T a [Tree a] deriving (Eq,Ord,Show)
 
@@ -354,28 +447,3 @@ main = do [r] <- rsolveNs [emptyN]
           showNode r
           s  <- genProblem r
           showNode s
-
-{------------------------------------------------------------------------------
-                          Changed and new functions
-
-------------------------------------------------------------------------------}
-
-exampleNrcSud :: Sudoku
-exampleNrcSud = grid2sud exampleNrc
-
-generateMany :: Int -> IO ()
-generateMany n =
-  do
-    let rs = map (\_ -> rsolveNs [emptyN]) [1..n]
-    putStrLn ("Generated " ++ (show (length rs)) ++ " sudokus")
-
-generateProblems :: Int -> IO ()
-generateProblems 0 = putStrLn "Finished"
-generateProblems n =
-  do
-    [r] <- rsolveNs [emptyN]
-    s <- genProblem r
-    let
-      cs = snd s
-    putStrLn ("Generated problem: " ++ (show n) ++ " Constraints: " ++ (show (length cs)))
-    generateProblems (n - 1)
