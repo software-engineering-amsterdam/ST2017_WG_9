@@ -33,7 +33,8 @@ boys = [Matthew, Peter, Jack, Arnold, Carl]
 * Carl What Arnold says is not true.
 --}
 accuses :: Boy -> Boy -> Bool
-accuses Matthew x = x /= Matthew &&  x /= Carl
+accuses Matthew x = x == Matthew || x == Peter || x == Jack || x == Arnold || x == Carl
+-- accuses Matthew x = x /= Matthew &&  x /= Carl
 accuses Peter x = x == Matthew || x == Jack
 accuses Jack x = not (accuses Matthew x) && not (accuses Peter x)
 accuses Arnold x = xor (accuses Matthew x) (accuses Peter x)

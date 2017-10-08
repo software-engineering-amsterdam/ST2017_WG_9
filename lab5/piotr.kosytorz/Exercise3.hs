@@ -376,6 +376,49 @@ isMinimal n =
 
 -- | Testing one random sudoku
 -- | ===========================================================================
+testOne :: IO Bool
+testOne = do
+          [r] <- rsolveNs [emptyN]
+          s <- genProblem r
+          return $ uniqueSol s
+
+-- | Testing many sudokus
+-- | ===========================================================================
+testMany :: Int -> IO Bool
+testMany n =
+  if n == 0 then
+    return True
+  else
+    do
+      p <- testOne
+      q <- testMany (n-1)
+      return (p && q)
+
+-- | Testing many sudokus reuslts
+-- | ===========================================================================
+-- | *Exercise3> testMany 10
+-- | True
+
+
+-- | Testing the example grids
+-- | ===========================================================================
+testGrid :: Grid -> Bool
+testGrid g = isMinimal $ (grid2sud g, constraints (grid2sud g))
+-- | Results:
+-- |
+-- | *Exercise3> testGrid example1
+-- | False
+-- | *Exercise3> testGrid example2
+-- | False
+-- | *Exercise3> testGrid example3
+-- | True
+-- | *Exercise3> testGrid example4
+-- | False
+-- | *Exercise3> testGrid example5
+-- | False
+
+-- | Main method to show one test of a random sudoku
+-- | ===========================================================================
 main :: IO ()
 main = do [r] <- rsolveNs [emptyN]
           showNode r
@@ -445,20 +488,3 @@ main = do [r] <- rsolveNs [emptyN]
 -- | |     5 |       | 1     |
 -- | +-------+-------+-------+
 -- | YES
-
--- | Testing the example grids
--- | ===========================================================================
-testGrid :: Grid -> Bool
-testGrid g = isMinimal $ (grid2sud g, constraints (grid2sud g))
--- | Results:
--- |
--- | *Exercise3> testGrid example1
--- | False
--- | *Exercise3> testGrid example2
--- | False
--- | *Exercise3> testGrid example3
--- | True
--- | *Exercise3> testGrid example4
--- | False
--- | *Exercise3> testGrid example5
--- | False
