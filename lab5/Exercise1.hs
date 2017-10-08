@@ -8,19 +8,25 @@ Time spent: 1h 20m (Read Lecture5 code, understand NRC problem, adjust)
 
 Solution for example problem:
 *Exercise1> solveSampleNrc
-+-------+-------+-------+
-| 4 7 8 | 3 9 2 | 6 1 5 |
-| 6 1 9 | 7 5 8 | 3 2 4 |
-| 2 3 5 | 4 1 6 | 9 7 8 |
-+-------+-------+-------+
-| 7 2 6 | 8 3 5 | 1 4 9 |
-| 8 9 1 | 6 2 4 | 7 5 3 |
-| 3 5 4 | 9 7 1 | 2 8 6 |
-+-------+-------+-------+
-| 5 6 7 | 2 8 9 | 4 3 1 |
-| 9 8 3 | 1 4 7 | 5 6 2 |
-| 1 4 2 | 5 6 3 | 8 9 7 |
-+-------+-------+-------+
++--------+---------+--------+
+| 4  7 8 | 3  9  2 | 6 1  5 |
+|   +--------+  +--------+  |
+| 6 |1 9 | 7 |5 |8 | 3 2 |4 |
+|   |    |   |  |  |     |  |
+| 2 |3 5 | 4 |1 |6 | 9 7 |8 |
++--------+---------+--------+
+| 7 |2 6 | 8 |3 |5 | 1 4 |9 |
+|   +--------+  +--------+  |
+| 8  9 1 | 6  2  4 | 7 5  3 |
+|   +--------+  +--------+  |
+| 3 |5 4 | 9 |7 |1 | 2 8 |6 |
++--------+---------+--------+
+| 5 |6 7 | 2 |8 |9 | 4 3 |1 |
+|   |    |   |  |  |     |  |
+| 9 |8 3 | 1 |4 |7 | 5 6 |2 |
+|   +--------+  +--------+  |
+| 1  4 2 | 5  6  3 | 8 9  7 |
++--------+---------+--------+
 
 Changed lines are marked with {--*NEW*--}
 
@@ -106,31 +112,50 @@ showVal :: Value -> String
 showVal 0 = " "
 showVal d = show d
 
-showRow :: [Value] -> IO()
-showRow [a1,a2,a3,a4,a5,a6,a7,a8,a9] =
+showRow :: [Value] -> Bool -> IO()
+showRow [a1,a2,a3,a4,a5,a6,a7,a8,a9] nrcPipe =
  do  putChar '|'         ; putChar ' '
      putStr (showVal a1) ; putChar ' '
+     putChar nrcPipeChar
      putStr (showVal a2) ; putChar ' '
      putStr (showVal a3) ; putChar ' '
      putChar '|'         ; putChar ' '
      putStr (showVal a4) ; putChar ' '
+     putChar nrcPipeChar
      putStr (showVal a5) ; putChar ' '
+     putChar nrcPipeChar
      putStr (showVal a6) ; putChar ' '
      putChar '|'         ; putChar ' '
      putStr (showVal a7) ; putChar ' '
      putStr (showVal a8) ; putChar ' '
+     putChar nrcPipeChar
      putStr (showVal a9) ; putChar ' '
      putChar '|'         ; putChar '\n'
+     where nrcPipeChar = if nrcPipe
+                              then '|'
+                              else ' '
 
 showGrid :: Grid -> IO()
 showGrid [as,bs,cs,ds,es,fs,gs,hs,is] =
- do putStrLn ("+-------+-------+-------+")
-    showRow as; showRow bs; showRow cs
-    putStrLn ("+-------+-------+-------+")
-    showRow ds; showRow es; showRow fs
-    putStrLn ("+-------+-------+-------+")
-    showRow gs; showRow hs; showRow is
-    putStrLn ("+-------+-------+-------+")
+  do putStrLn ("+--------+---------+--------+")
+     showRow as False;
+     putStrLn ("|   +--------+  +--------+  |")
+     showRow bs True;
+     putStrLn ("|   |    |   |  |  |     |  |")
+     showRow cs True
+     putStrLn ("+--------+---------+--------+")
+     showRow ds True;
+     putStrLn ("|   +--------+  +--------+  |")
+     showRow es False;
+     putStrLn ("|   +--------+  +--------+  |")
+     showRow fs True
+     putStrLn ("+--------+---------+--------+")
+     showRow gs True;
+     putStrLn ("|   |    |   |  |  |     |  |")
+     showRow hs True;
+     putStrLn ("|   +--------+  +--------+  |")
+     showRow is False
+     putStrLn ("+--------+---------+--------+")
 
 type Sudoku = (Row,Column) -> Value
 
