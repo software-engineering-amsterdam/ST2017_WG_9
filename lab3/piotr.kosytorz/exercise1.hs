@@ -6,7 +6,7 @@ import Test.QuickCheck
 import Lecture3
 
 {--
-  Time spent: 1h
+  Time spent: 2h
 --}
 
 contradiction :: Form -> Bool

@@ -6,7 +6,7 @@ import Lecture3
 import Exercise4
 
 {--
-  Time spent: 40 min
+  Time spent: 1h
 --}
 
 {--

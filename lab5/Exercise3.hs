@@ -1,8 +1,11 @@
+module Exercise3 where
 
-module Exercise3
+-- | Exercise3
+-- | ===========================================================================
+-- | Time spent: 2h
 
-where
-
+-- | Note: modifications are marked and explained
+-- | Note2: testing methods and test functions at the bottom of the file
 
 import Data.List
 import System.Random
@@ -11,82 +14,6 @@ type Row    = Int
 type Column = Int
 type Value  = Int
 type Grid   = [[Value]]
-
-
--- Time Spent: 1h 30m
-
--- to prove we test 2 properties:
-
--- for a generated solution there is only one solution
--- if we erase one more hint there are now more than one solutions
-
-{------------------------------------------------------------------------------
-                            Added functions
-------------------------------------------------------------------------------}
-
-oneSolProp :: Node -> Bool
-oneSolProp n = length (solveNs [n]) == 1
-
-{-
-
-remHintMoreSolProp only the first position is removed
-to further strengten the test we could
-
-- randomize the position that is removed
-  (but since we always have a new sudoku, this is actually the case already)
-- iterate and remove every remaining hint once
-
--}
-remHintMoreSolProp :: Node -> Bool
-remHintMoreSolProp n = length (solveNs [nr]) > 1
-  where nr = eraseN n (rp !! 0)
-        rp = filledPositions (fst n)
-
--- to test we check both properties for a generated Sudoku
-testOne :: IO Bool
-testOne = do [r] <- rsolveNs [emptyN]
-             s  <- genProblem r
-             --showNode s
-             if (oneSolProp s && remHintMoreSolProp s) then
-                  return True
-             else
-               do error "Test failed"
-
-testN :: Int -> IO Bool
-testN n =
-  if n == 0 then
-    return True
-  else
-    do
-      t <- testOne
-      t2 <- testN (n-1)
-      return (t && t2)
-
--- the test function will test the properties on n sudokus
--- to print the tested sudokus comment in the showNode s in testOne
-test :: Int -> IO ()
-test n =
-  do
-    b <- testN n
-    if b == True then
-      print "All tests passed"
-    else
-      print "Failed test"
-
-{-
-
-output for 100 tested sudokus:
-
-*Exercise3> test 100
-"All tests passed"
-
--}
-
-
-{------------------------------------------------------------------------------
-                            Existing code
-
-------------------------------------------------------------------------------}
 
 positions, values :: [Int]
 positions = [1..9]
@@ -424,8 +351,140 @@ genProblem n = do ys <- randomize xs
                   return (minimalize n ys)
    where xs = filledPositions (fst n)
 
+ -- | Modification begin
+ -- | ===========================================================================
+ -- | getAllSudokusWithOneElementLess returns an array of all possible sub-sudokus
+ -- | with one element removed
+getAllSudokusWithOneElementLess :: Sudoku -> [Sudoku]
+getAllSudokusWithOneElementLess s = map (\x -> extend s(x, 0)) $ filledPositions s
+-- | ===========================================================================
+-- | Modification end
+
+-- | Modification begin
+-- | ===========================================================================
+-- | isMinimal checks whether a node is unique or not.
+-- | A node is uniqie if it has only one solution
+-- |   -> uniqueSol n and
+-- | all sub-sudokus with missing one element must have more than one solution
+-- |   -> not(uniqueSol (x, constraints x) )
+isMinimal :: Node -> Bool
+isMinimal n =
+  (uniqueSol n) &&
+  (all (\x -> not(uniqueSol (x, constraints x))) $ getAllSudokusWithOneElementLess (fst n))
+-- | ===========================================================================
+-- | Modification end
+
+-- | Testing one random sudoku
+-- | ===========================================================================
+testOne :: IO Bool
+testOne = do
+          [r] <- rsolveNs [emptyN]
+          s <- genProblem r
+          return $ uniqueSol s
+
+-- | Testing many sudokus
+-- | ===========================================================================
+testMany :: Int -> IO Bool
+testMany n =
+  if n == 0 then
+    return True
+  else
+    do
+      p <- testOne
+      q <- testMany (n-1)
+      return (p && q)
+
+-- | Testing many sudokus reuslts (caution: takes some time to run!)
+-- | ===========================================================================
+-- | *Exercise3> testMany 10
+-- | True
+
+
+-- | Testing the example grids
+-- | ===========================================================================
+testGrid :: Grid -> Bool
+testGrid g = isMinimal $ (grid2sud g, constraints (grid2sud g))
+-- | Results:
+-- |
+-- | *Exercise3> testGrid example1
+-- | False
+-- | *Exercise3> testGrid example2
+-- | False
+-- | *Exercise3> testGrid example3
+-- | True
+-- | *Exercise3> testGrid example4
+-- | False
+-- | *Exercise3> testGrid example5
+-- | False
+
+-- | Main method to show one test of a random sudoku
+-- | ===========================================================================
 main :: IO ()
 main = do [r] <- rsolveNs [emptyN]
           showNode r
           s  <- genProblem r
           showNode s
+          if
+            uniqueSol s
+          then
+            putStrLn("YES")
+          else
+            putStrLn("NO!")
+-- | Results
+-- | ===========================================================================
+-- | *Exercise3> main
+-- | +-------+-------+-------+
+-- | | 4 8 1 | 7 9 5 | 6 3 2 |
+-- | | 2 3 7 | 1 6 8 | 9 5 4 |
+-- | | 5 6 9 | 3 2 4 | 7 1 8 |
+-- | +-------+-------+-------+
+-- | | 7 2 8 | 6 4 1 | 3 9 5 |
+-- | | 9 1 4 | 2 5 3 | 8 6 7 |
+-- | | 6 5 3 | 8 7 9 | 4 2 1 |
+-- | +-------+-------+-------+
+-- | | 8 9 6 | 5 1 7 | 2 4 3 |
+-- | | 3 4 5 | 9 8 2 | 1 7 6 |
+-- | | 1 7 2 | 4 3 6 | 5 8 9 |
+-- | +-------+-------+-------+
+-- | +-------+-------+-------+
+-- | |     1 |       |     2 |
+-- | |       |     8 | 9     |
+-- | | 5     |   2   | 7     |
+-- | +-------+-------+-------+
+-- | | 7     | 6     |     5 |
+-- | | 9     |       |       |
+-- | |       | 8 7   | 4 2   |
+-- | +-------+-------+-------+
+-- | |     6 |     7 |   4   |
+-- | | 3     |       | 1 7   |
+-- | | 1   2 |   3   |     9 |
+-- | +-------+-------+-------+
+-- | YES
+-- | *Exercise3> main
+-- | +-------+-------+-------+
+-- | | 5 4 8 | 2 3 7 | 9 6 1 |
+-- | | 6 1 2 | 9 8 4 | 7 5 3 |
+-- | | 3 7 9 | 5 6 1 | 8 2 4 |
+-- | +-------+-------+-------+
+-- | | 8 5 4 | 3 2 9 | 6 1 7 |
+-- | | 1 2 7 | 8 4 6 | 5 3 9 |
+-- | | 9 3 6 | 7 1 5 | 2 4 8 |
+-- | +-------+-------+-------+
+-- | | 7 8 3 | 1 5 2 | 4 9 6 |
+-- | | 2 6 1 | 4 9 8 | 3 7 5 |
+-- | | 4 9 5 | 6 7 3 | 1 8 2 |
+-- | +-------+-------+-------+
+-- | +-------+-------+-------+
+-- | |   4   |     7 |       |
+-- | |     2 |     4 |   5   |
+-- | | 3     |     1 | 8     |
+-- | +-------+-------+-------+
+-- | |       | 3     |       |
+-- | | 1   7 |       | 5     |
+-- | | 9     | 7     |   4 8 |
+-- | +-------+-------+-------+
+-- | |   8   |       |     6 |
+-- | |   6   |   9   | 3     |
+-- | |     5 |       | 1     |
+-- | +-------+-------+-------+
+-- | YES
