@@ -1,13 +1,12 @@
-module Exercise2 where
+module Exercise3 where
 
--- | Exercise1
+-- | Exercise3
 -- | ===========================================================================
--- | Time spent: 30m
+-- | Time spent: 10m
 
 import Data.List
 import System.Random
-import Math.NumberTheory.Logarithms
 import Lecture6
 
 composites' :: [Integer]
-composites' = [1..]
+composites' = filter (not.prime) [2..]

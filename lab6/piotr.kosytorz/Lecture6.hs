@@ -153,8 +153,12 @@ primeMR k n = do
     if exM a (n-1) n /= 1 || mrComposite a n
     then return False else primeMR (k-1) n
 
+-- | Modification begin
+-- | ===========================================================================
 composites :: [Integer]
-composites = error "not yet implemented"
+composites = filter (not.prime) [2..]
+-- | ===========================================================================
+-- | Modification end
 
 encodeDH :: Integer -> Integer -> Integer -> Integer
 encodeDH p k m = m*k `mod` p
