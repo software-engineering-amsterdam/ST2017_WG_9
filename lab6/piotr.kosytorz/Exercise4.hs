@@ -115,6 +115,9 @@ smallestFalsePrimeAfterNTests k i n r = do
 -- |
 -- |  Final discussion: What happens if you increase k?
 -- |
--- |  The bigger the k, the smaller chance that primeTestsF will get fooled.
+-- |  The bigger the k, the smaller chance that primeTestsF will get fooled,
+-- |  so the bigger the smallest found false prime should be.
+-- |  Nevertheless, if you run enouht many tests, the bigger the chance is
+-- |  that you will get a smaller false prime (like in my tests with 1000 tests).
 -- |
 -- | ===========================================================================
