@@ -32,7 +32,9 @@ findMersenPrimes k i = do
 
 -- | Report
 -- | ===========================================================================
--- | My little function found the following resultis until it fell apart:
+-- | My little function found the following resultis until it took too much time
+-- | to wait on the results:
+-- |
 -- | *Exercise6b> findMersenPrimes 1 0
 -- | 2
 -- | 3
@@ -49,6 +51,8 @@ findMersenPrimes k i = do
 -- | 521
 -- | 607
 -- | 1279
+-- | 2203
+-- | 2281
 -- | ...
 -- |
 -- | According to this article: https://primes.utm.edu/mersenne/, all of them
