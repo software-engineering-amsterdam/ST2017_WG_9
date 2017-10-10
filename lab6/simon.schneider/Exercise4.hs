@@ -1,6 +1,6 @@
 module Exercise4 where
 
-import Lecture6
+import Lecture6Dirty
 import Exercise3
 
 {------------------------------------------------------------------------------
@@ -87,7 +87,8 @@ The amount of false positives is reduced.
 
 A value of k larger than 3 does not seem to improve the accuracy much further at
 first. But the jump from 7 to 15 improved the accuracy to a seemingly perfect
-result. There were no false positives in many runs.
+result. k increases the amount of tests and therefore also the needed runtime.
+If someone uses the algorithm he has to weight performance against accuracy.
 
 -------------------------------------------------------------------------------}
 
@@ -108,3 +109,5 @@ test :: Int -> Integer -> IO Int
 test k n = do
   ps <- findFalsePositives' k (compositesFinite n)
   return (length ps)
+
+--TODO: Find smallest false positive

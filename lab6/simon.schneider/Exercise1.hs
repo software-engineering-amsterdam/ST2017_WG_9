@@ -90,4 +90,4 @@ exMout x y n
 
 
 testExM' :: Positive Integer -> Positive Integer -> Positive Integer -> Bool
-testExM' (Positive x) (Positive y) (Positive m) = exM' x y m == x ^ y `mod` m && exM' x y m == exM x y m
+testExM' (Positive x) (Positive y) (Positive m) = exM' x y m == x ^ y `mod` m && exM' x y m == expM x y m

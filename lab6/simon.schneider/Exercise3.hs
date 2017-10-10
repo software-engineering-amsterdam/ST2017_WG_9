@@ -20,11 +20,15 @@ compositesFinite for finite list:
 
 import Lecture6
 
+-- One is neither prime nor composite
+isComposite :: Integer -> Bool
+isComposite n = not (prime n) && n /= 1
+
 composites' :: [Integer]
-composites' = filter (not . prime) [0..]
+composites' = filter isComposite [0..]
 
 compositesFinite :: Integer -> [Integer]
-compositesFinite n = filter (not . prime) [0..n]
+compositesFinite n = filter isComposite [0..n]
 
-compositesEnd :: Integer -> [Integer]
-compositesEnd n = filter (not . prime) [n..]
+compositesStartingAt :: Integer -> [Integer]
+compositesStartingAt n = filter isComposite [n..]
