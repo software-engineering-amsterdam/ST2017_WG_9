@@ -111,3 +111,10 @@ smallestFalsePrimeAfterNTests k i n r = do
 -- | 21
 -- | (6.65 secs, 4,793,023,536 bytes)
 -- |
+-- | ===========================================================================
+-- |
+-- |  Final discussion: What happens if you increase k?
+-- |
+-- |  The bigger the k, the smaller chance that primeTestsF will get fooled.
+-- |
+-- | ===========================================================================
