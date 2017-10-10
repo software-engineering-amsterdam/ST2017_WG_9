@@ -4,6 +4,7 @@ module Lecture6
 where
 
 import System.Random
+import Math.NumberTheory.Logarithms
 
 factorsNaive :: Integer -> [Integer]
 factorsNaive n0 = factors' n0 2 where
@@ -110,8 +111,17 @@ coprimes = filter (uncurry coprime) pairs
 expM ::  Integer -> Integer -> Integer -> Integer
 expM x y = rem (x^y)
 
+-- | Modification begin
+-- | ===========================================================================
 exM :: Integer -> Integer -> Integer -> Integer
-exM = expM -- to be replaced by a fast version
+exM _ 0 _ = 1
+exM x y n = ((pow2mod x (integerLog2 y) n) * (exM x (y-2^(integerLog2 y)) n)) `mod` n
+    where
+    pow2mod x i n
+      | i > 0 = pow2mod (x^2 `mod` n) (i-1) n
+      | otherwise = x
+-- | ===========================================================================
+-- | Modification end
 
 primeTestF :: Integer -> IO Bool
 primeTestF n = do
@@ -143,8 +153,12 @@ primeMR k n = do
     if exM a (n-1) n /= 1 || mrComposite a n
     then return False else primeMR (k-1) n
 
+-- | Modification begin
+-- | ===========================================================================
 composites :: [Integer]
-composites = error "not yet implemented"
+composites = filter (not.prime) [2..]
+-- | ===========================================================================
+-- | Modification end
 
 encodeDH :: Integer -> Integer -> Integer -> Integer
 encodeDH p k m = m*k `mod` p
