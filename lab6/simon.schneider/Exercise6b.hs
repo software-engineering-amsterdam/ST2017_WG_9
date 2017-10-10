@@ -10,7 +10,7 @@ Find large mersenne numbers using Miller-Rabin
 
 RECIPE:
 1. Find prime p
-2. Check if 2 ^ p - 1 is also prime
+2. Check if mp = 2 ^ p - 1 is also prime
 
 TESTS:
 findMersennePrimesMR 5  [2..5000]
@@ -21,8 +21,6 @@ findMersennePrimesMR 5  [2..5000]
 [2,3,5,7,13,17,19,31,61,89,107,127,521,607,1279,2203,2281,3217,4253]
 (77.85 secs, 30,490,365,264 bytes)
 --> k does not make a large diffrence in time and the quality.
-
-
 
 *Exercise6b> findMersennePrimesSafe primes
 FOUND Mersenne prime candidate: 2
@@ -62,6 +60,9 @@ A faster approach than checking all natural numbers is checking the prime number
 Comparing the list with https://primes.utm.edu/mersenne/ shows that the numbers found are actually
 mersenne primes. We can also see that our little Haskell program and a new MacBook Pro can outsmart
 a super computer from 1971 ;)
+
+Please note:
+The outputted numbers are values for the exponent p in 2 ^ p - 1 = mp
 
 ------------------------------------------------------------------------------}
 
