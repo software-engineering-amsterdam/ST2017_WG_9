@@ -6,6 +6,8 @@ import Data.Char
 import Data.List
 import Test.QuickCheck
 
+{- Time: 1.25 hr(s) -}
+
 factorsNaive :: Integer -> [Integer]
 factorsNaive n0 = factors' n0 2 where 
   factors' 1 _ = []
