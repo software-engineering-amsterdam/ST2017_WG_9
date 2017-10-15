@@ -54,9 +54,13 @@ FOUND Mersenne prime candidate: 2281
 FOUND Mersenne prime candidate: 3217
 FOUND Mersenne prime candidate: 4253
 FOUND Mersenne prime candidate: 4423
-...
+--> Does not find next mersenne number (with exponent 9689) in reasonable time
+
 Please note:
 The outputted numbers are values for the exponent p in 2 ^ p - 1 = mp
+AND the exponents are only pseudo mersenne prime, since p is a prime but
+2 ^ p - 1 was checked with the miller-rabbit algorithm (produces false positives)
+After finding a pseudo mersenne prime, it has to be checked for validity.
 
 --> Its computational wise faster to use the miller rabbit algorithm to find
 mersenne prime candidates than using a "safe" approach.
@@ -64,8 +68,7 @@ mersenne prime candidates than using a "safe" approach.
 Comparing the list with https://primes.utm.edu/mersenne/ shows that the numbers
 found are actually mersenne primes.
 We can also see that our little Haskell program and a new MacBook Pro can outsmart
-a super computer from 1971 ;)
-
+super computers and mathematicians from 1961 ;)
 
 ------------------------------------------------------------------------------}
 

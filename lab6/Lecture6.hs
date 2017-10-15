@@ -1,4 +1,3 @@
-
 module Lecture6
 
 where
@@ -111,7 +110,13 @@ expM ::  Integer -> Integer -> Integer -> Integer
 expM x y z = rem (x^y) z
 
 exM :: Integer -> Integer -> Integer -> Integer
-exM = expM -- to be replaced by a fast version
+exM _ 0 _ = 1
+exM x y n
+  | even y = w
+  | otherwise = (x * w) `mod` n
+  where
+    z = exM x (y `div` 2) n
+    w = (z * z) `mod` n
 
 primeTestF :: Integer -> IO Bool
 primeTestF n = do
@@ -143,8 +148,11 @@ primeMR k n = do
     if exM a (n-1) n /= 1 || mrComposite a n
     then return False else primeMR (k-1) n
 
+isComposite :: Integer -> Bool
+isComposite n = not (prime n) && n /= 1
+
 composites :: [Integer]
-composites = error "not yet implemented"
+composites = filter isComposite [0..]
 
 encodeDH :: Integer -> Integer -> Integer -> Integer
 encodeDH p k m = m*k `mod` p

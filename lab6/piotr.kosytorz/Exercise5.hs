@@ -41,7 +41,7 @@ carmichaelTest k i = do
 -- | "primeTestsF failed"
 -- | ...
 -- |
--- | The reason is that, by nature, carmichael numbers are the wak point of
+-- | The reason is that, by nature, carmichael numbers are the weak point of
 -- | Fermat's algorithm, after Wikipedia (https://en.wikipedia.org/wiki/Carmichael_number):
 -- | "Fermat's little theorem states that if p is a prime number, then for any
 -- | integer b, the number b^p − b is an integer multiple of p. Carmichael

@@ -12,7 +12,7 @@ Check that your implementation is more efficient than expM by running a number o
 relevant tests and documenting the results.
 
 Tests are below:
-We already checked for correct implementation in Exercise1 using QuickCheck
+We already checked for correct implementation in Exercise1 using QuickCheck.
 The test results show that `expM` performs better for small numbers but ExM'
 really shines with very large numbers and is therefore perfect for
 cryptography. It even works for extremly large numbers, the `expM` process will

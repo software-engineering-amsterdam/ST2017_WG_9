@@ -45,13 +45,14 @@ Tests based on Fermat's Little Theorem are less effective than strong
 probable prime tests such as the Baillie-PSW primality test and the Miller–Rabin
 primality test.
 
+(1)
 In contrast to fermats test, the Rabin-Miller algorithm also tests, given a
 number n, whether Z_n has a nontrivial root of Unity.
-For Fermat's test, if a composite number nn is not Carmichael, then the
+For Fermat's test, if a composite number n is not Carmichael, then the
 probability that the test will detect compositeness is at least 1/2.
 However, the test will fail all Carmichael numbers.
 
--->
+(2)
 For the Rabin-Miller test, every composite number will be detected with
 probability at least 1/2. This means that the correctness probability is
 independent of the input (there are no "hard" inputs).
@@ -61,7 +62,6 @@ Sources:
 https://cs.stackexchange.com/questions/21462/why-miller-rabin-instead-of-fermat-primality-test
 https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test
 https://en.wikipedia.org/wiki/Carmichael_number
-
 -------------------------------------------------------------------------------}
 
 

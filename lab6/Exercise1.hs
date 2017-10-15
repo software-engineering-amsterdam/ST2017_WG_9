@@ -4,7 +4,7 @@ import Lecture6
 import Test.QuickCheck
 
 {------------------------------------------------------------------------------
-time spent: 1h 30m, Try algorithm on paper, translate to haskell, test and output
+Time spent: 1h 30m, Try algorithm on paper, translate to haskell, test and output
 
 
 x ^ 33 `mod` 5 = 4
@@ -63,6 +63,7 @@ the Haskell implementation (`mod`)
 
 ------------------------------------------------------------------------------}
 
+-- This algorithm was included as exM inside Lecture6
 exM' :: Integer -> Integer -> Integer -> Integer
 exM' _ 0 _ = 1
 exM' x y n

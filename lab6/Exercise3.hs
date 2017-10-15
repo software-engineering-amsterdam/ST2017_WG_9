@@ -1,7 +1,7 @@
 module Exercise3 where
 
 {------------------------------------------------------------------------------
-time spent: 15m
+Time spent: 15m
 
 Task:
 Fermats primality check has false positives, primes are always identified as
@@ -35,14 +35,14 @@ import Lecture6
 import Data.List
 
 -- One is neither prime nor composite
-isComposite :: Integer -> Bool
-isComposite n = not (prime n) && n /= 1
+isComposite' :: Integer -> Bool
+isComposite' n = not (prime n) && n /= 1
 
 composites' :: [Integer]
-composites' = filter isComposite [0..]
+composites' = filter isComposite' [0..]
 
 compositesFinite :: Integer -> [Integer]
-compositesFinite n = filter isComposite [0..n]
+compositesFinite n = filter isComposite' [0..n]
 
 compositesStartingAt :: Integer -> [Integer]
-compositesStartingAt n = filter isComposite [n..]
+compositesStartingAt n = filter isComposite' [n..]
