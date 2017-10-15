@@ -72,6 +72,9 @@ exM' x y n
     z = exM' x (y `div` 2) n
     w = (z * z) `mod` n
 
+
+-- Extra:
+
 exMout :: Integer -> Integer -> Integer -> IO Integer
 exMout _ 0 _ = return 1
 exMout x y n
