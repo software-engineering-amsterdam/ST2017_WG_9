@@ -32,7 +32,11 @@ False positives Fermat      : 1000 ( 100.0%)
 False positives Miller-Rabin: 0 ( 0.0%)
 
 *Exercise6> compareTests 10 1000
-False positives Fermat      : 1000 ( 100.0%)
+False positives Fermat      : 999 ( 99.9%)
+False positives Miller-Rabin: 0 ( 0.0%)
+
+*Exercise6> compareTests 50 1000
+False positives Fermat      : 994 ( 99.4%)
 False positives Miller-Rabin: 0 ( 0.0%)
 
 CONCLUSION:
@@ -48,15 +52,18 @@ primality test.
 (1)
 In contrast to fermats test, the Rabin-Miller algorithm also tests, given a
 number n, whether Z_n has a nontrivial root of Unity.
-For Fermat's test, if a composite number n is not Carmichael, then the
-probability that the test will detect compositeness is at least 1/2.
-However, the test will fail all Carmichael numbers.
+The property a^p = a (mod p) is true for prime numbers and carmichael numbers, this
+is why fermats test will fail for allmost all carmichael numbers, especially with a
+low k.
+If we find an a that is not relativly prime with p (higher probability with high k),
+the carmichael number will not pass fermats primality check.
 
 (2)
 For the Rabin-Miller test, every composite number will be detected with
 probability at least 1/2. This means that the correctness probability is
 independent of the input (there are no "hard" inputs).
-This is why rabin-miller is stronger than eulers algorithm.
+
+This is why rabin-miller is stronger than fermats test.
 
 Sources:
 https://cs.stackexchange.com/questions/21462/why-miller-rabin-instead-of-fermat-primality-test

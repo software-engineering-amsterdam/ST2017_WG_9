@@ -36,6 +36,8 @@ relatively prime to the number, even though it is not actually prime. "
 As we could see in the tests all of the carmichael numbers were falsely
 identified as primes. Even a high value of k (50) will not improve the accuracy.
 
+Further explanation in exercise 6.
+
 -------------------------------------------------------------------------------}
 
 import Lecture6
