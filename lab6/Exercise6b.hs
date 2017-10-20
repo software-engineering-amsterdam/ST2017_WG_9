@@ -75,7 +75,7 @@ super computers and mathematicians from 1961 ;)
 isMersennePrime :: (Integer -> IO Bool) -> Integer -> IO Bool
 isMersennePrime f n =
   do
-    isP <- f 2
+    isP <- f n
     isMp <- f (2 ^ n - 1)
     return (isP && isMp)
 
